@@ -8,6 +8,27 @@
 
   <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap4.min.css">
+
+  <!-- Load Leaflet from CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+  integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+  crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+  integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+  crossorigin=""></script>
+
+  <!-- Load Esri Leaflet from CDN -->
+  <script src="https://unpkg.com/esri-leaflet@2.5.0/dist/esri-leaflet.js"
+    integrity="sha512-ucw7Grpc+iEQZa711gcjgMBnmd9qju1CICsRaryvX7HJklK0pGl/prxKvtHwpgm5ZHdvAil7YPxI1oWPOWK3UQ=="
+    crossorigin=""></script>
+
+  <!-- Load Esri Leaflet Geocoder from CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.3.3/dist/esri-leaflet-geocoder.css"
+    integrity="sha512-IM3Hs+feyi40yZhDH6kV8vQMg4Fh20s9OzInIIAc4nx7aMYMfo+IenRUekoYsHZqGkREUgx0VvlEsgm7nCDW9g=="
+    crossorigin="">
+  <script src="https://unpkg.com/esri-leaflet-geocoder@2.3.3/dist/esri-leaflet-geocoder.js"
+    integrity="sha512-HrFUyCEtIpxZloTgEKKMq4RFYhxjJkCiF5sDxuAokklOeZ68U2NPfh4MFtyIVWlsKtVbK5GD2/JzFyAfvT5ejA=="
+    crossorigin=""></script>
     
 <style>
   .dropify-wrapper {
@@ -16,6 +37,7 @@
     height: 150px;
   }
 
+  #map { height: 300px }
   .card {
     border-radius: 10px;
   }
@@ -112,8 +134,8 @@
   </div>
 </section>
 
-<div class="modal fade" tabindex="-1" role="dialog" id="tambahKemacetan">
-  <div class="modal-dialog " role="document">
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="tambahKemacetan">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Tambah Kemacetan</h5>
@@ -130,28 +152,29 @@
           </div>
           <div class="form-group">
             <label for="ringkas_kejadian">Ringkasan Kejadian</label>
-            <textarea name="ringkas_kejadian" class="form-control" style="height: 30vh;"></textarea>
+            <textarea name="ringkas_kejadian" class="form-control" style="height: 20vh;"></textarea>
           </div>
           <div class="form-group">
             <label for="detail_kejadian">Detail Kejadian</label>
-            <textarea name="detail_kejadian" class="form-control" style="height: 30vh;"></textarea>
+            <textarea name="detail_kejadian" class="form-control my-editor" id="my-editor" style="height: 30vh;"></textarea>
           </div>
-          <div class="form-group">
+          {{-- <div class="form-group">
             <label for="file_pendukung">File Pendukung</label>
             <input type="file" class="form-control dropify" name="file_pendukung"
                     data-allowed-file-extensions="png jpg jpeg svg" data-show-remove="false">
-          </div>
+          </div> --}}
           <div class="form-group">
             <label for="waktu">Waktu</label>
             <input type="time" name="waktu" class="form-control">
           </div>
+          <div id="map"></div>
           <div class="form-group">
             <label for="latitude">Latitude</label>
-            <input type="text" name="latitude" class="form-control">
+            <input type="text" name="latitude" id="latitude" class="form-control" readonly>
           </div>
           <div class="form-group">
             <label for="longitude">Longitude</label>
-            <input type="text" name="longitude" class="form-control">
+            <input type="text" name="longitude" id="longitude" class="form-control" readonly>
           </div>
           
         </div>
@@ -166,8 +189,8 @@
 
 @foreach ($kemacetan as $kemacetanData)
 <div class="modal fade" tabindex="-1" role="dialog" id="editKemacetan{{$kemacetanData->id}}">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content modal-lg">
       <div class="modal-header">
         <h5 class="modal-title">Edit Kemacetan</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -186,19 +209,19 @@
               </div>
               <div class="form-group">
                 <label for="ringkas_kejadian">Ringkasan Kejadian</label>
-                <textarea name="edit_ringkas_kejadian" class="form-control" style="height: 30vh;">{{ $kemacetanData->ringakas_kejadian }}</textarea>
+                <textarea name="edit_ringkas_kejadian" class="form-control" style="height: 20vh;">{{ $kemacetanData->ringakas_kejadian }}</textarea>
               </div>
               <div class="form-group">
                 <label for="detail_kejadian">Detail Kejadian</label>
-                <textarea name="edit_detail_kejadian" class="form-control" style="height: 30vh;">{{ $kemacetanData->detail_kejadian }}</textarea>
+                <textarea name="edit_detail_kejadian" id="my-editor-edit" class="form-control" style="height: 30vh;">{{ $kemacetanData->detail_kejadian }}</textarea>
               </div>
-              <div class="form-group">
+              {{-- <div class="form-group">
                 <label for="file_pendukung">File Pendukung</label>
                 <input type="file" class="form-control dropify" name="file_pendukung"
                     data-allowed-file-extensions="png jpg jpeg svg" data-show-remove="false" data-default-file="@if(!empty($kemacetanData->file_pendukung) &&
                     Storage::exists($kemacetanData->file_pendukung)){{ Storage::url($kemacetanData->file_pendukung) }}@endif">
                 <button></button>  
-            </div>
+            </div> --}}
               <div class="form-group">
                 <label for="waktu">Waktu</label>
                 <input type="time" name="edit_waktu" class="form-control" value="{{ $kemacetanData->waktu }}">
@@ -239,7 +262,7 @@
               </div>
               <div class="form-group">
                 <label for="ringkas_kejadian">Ringkasan Kejadian</label>
-                <textarea class="form-control" readonly style="height: 30vh;">{{ $kemacetanData->ringakas_kejadian }}</textarea>
+                <textarea class="form-control" readonly style="height: 20vh;">{{ $kemacetanData->ringakas_kejadian }}</textarea>
               </div>
               <div class="form-group">
                 <label for="detail_kejadian">Detail Kejadian</label>
@@ -249,6 +272,7 @@
                 <label for="waktu">Waktu</label>
                 <input type="time" class="form-control" value="{{ $kemacetanData->waktu }}" readonly>
               </div>
+              <div id="map-edit"></div>
               <div class="form-group">
                 <label for="latitude">Latitude</label>
                 <input type="text" class="form-control" value="{{ $kemacetanData->latitude }}" readonly>
@@ -452,6 +476,56 @@ const deleteKemacetan = $("#deleteKemacetanForm").attr('action');
 
   $("#deleteAllButton").attr('disabled', true); 
 
+  
+</script>
+<script src="//cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
+<script>
+  var options = {
+    filebrowserImageBrowseUrl: '/laravel-filemanager?type=Images',
+    filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token=',
+    filebrowserBrowseUrl: '/laravel-filemanager?type=Files',
+    filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token='
+  };
+</script>
+<script>
+    CKEDITOR.replace('my-editor');
+    CKEDITOR.replace('my-editor-edit');
+</script>
 
+<script>
+
+// var map = L.map('map', {
+//   scrollWheelZoom: false
+// }).setView([51.505, -0.09], 13);
+
+// L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+//     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+// }).addTo(map);
+
+// L.marker([51.5, -0.09]).addTo(map)
+//     .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+//     .openPopup();
+
+  var map = L.map('map', {
+    scrollWheelZoom: false
+  }).setView(new L.LatLng(-6.8578387, 107.9210544), 15);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  var gcs = L.esri.Geocoding.geocodeService();
+
+  map.on('click', (e)=>{
+    gcs.reverse().latlng(e.latlng).run((err, res)=>{
+      if(err) return;
+      document.getElementById('latitude').value = e.latlng.lat
+      document.getElementById('longitude').value = e.latlng.lng
+      L.marker(res.latlng).addTo(map).bindPopup(res.address.Match_addr).openPopup();
+    });
+  });
+
+  
+  
 </script>
 @endsection

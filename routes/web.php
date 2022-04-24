@@ -22,8 +22,11 @@ use App\Http\Controllers\Back\ManajemenUserController;
 */
 
 
+Route::get('/', function() {
+    return redirect('login');
+});
+
 Route::resource('login', LoginController::class)->middleware('guest');
-// Route::resource('/', HomeController::class);
 
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
