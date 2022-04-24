@@ -49,7 +49,9 @@ class KemacetanController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = Kemacetan::findOrFail($id);
+
+        return response()->json($data, 200);
     }
 
     /**

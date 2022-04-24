@@ -20,3 +20,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('kemacetan', [KemacetanController::class, 'index']);
+Route::get('kemacetan/detail/{id}', [KemacetanController::class, 'show']);
