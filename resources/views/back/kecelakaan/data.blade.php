@@ -177,11 +177,11 @@
           <div id="map"></div>
           <div class="form-group">
             <label for="latitude">Latitude</label>
-            <input type="text" name="latitude" id="latitude" class="form-control" readonly>
+            <input type="text" name="latitude" id="latitude" class="form-control">
           </div>
           <div class="form-group">
             <label for="longitude">Longitude</label>
-            <input type="text" name="longitude" id="longitude" class="form-control" readonly>
+            <input type="text" name="longitude" id="longitude" class="form-control">
           </div>
           
         </div>
@@ -236,11 +236,11 @@
               <div id="map-edit"></div>
               <div class="form-group">
                 <label for="latitude">Latitude</label>
-                <input type="text" id="editLatitude" name="edit_latitude" class="form-control" value="{{ $data->latitude }}" readonly>
+                <input type="text" id="editLatitude" name="edit_latitude" class="form-control" value="{{ $data->latitude }}">
               </div>
               <div class="form-group">
                 <label for="longitude">Longitude</label>
-                <input type="text" id="editLongitude" name="edit_longitude" class="form-control" value="{{ $data->longitude }}" readonly>
+                <input type="text" id="editLongitude" name="edit_longitude" class="form-control" value="{{ $data->longitude }}">
               </div>
         </div>
         <div class="modal-footer bg-whitesmoke br">
