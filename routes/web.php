@@ -8,6 +8,7 @@ use App\Http\Controllers\Back\ProfileWebController;
 use App\Http\Controllers\Back\PosController;
 use App\Http\Controllers\Back\PosGaturController;
 use App\Http\Controllers\Back\KemacetanController;
+use App\Http\Controllers\Back\KecelakaanController;
 use App\Http\Controllers\Back\ManajemenUserController;
 
 /*
@@ -56,6 +57,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
     Route::resource('kemacetan', KemacetanController::class);
     // Route::post('teams/destroy-all', [TeamController::class, 'destroyAll'])->name('teams.destroyAll');
 
+    Route::resource('kecelakaan', KecelakaanController::class);
+    
     Route::resource('roles', RoleController::class);
     Route::post('roles/destroy-all', [RoleController::class, 'destroyAll'])->name('roles.destroyAll');
     Route::post('roles/check-roles-name', [RoleController::class, 'checkRoleName'])->name('checkRoleName');

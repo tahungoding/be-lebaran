@@ -9,11 +9,17 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap4.min.css">
 
+  
+
     <style>
         .dropify-wrapper {
             border: 1px solid #e2e7f1;
             border-radius: .3rem;
             height: 150px;
+        }
+
+        #map {
+            height: 300px
         }
 
         .card {
@@ -93,36 +99,37 @@
                             $increment = 1;
                         @endphp
                         <tbody>
-                            @foreach ($user as $users)
+                            @foreach ($user as $data)
                                 <tr>
                                     <td>{{ $increment++ }} </td>
-                                    <td>{{ $users->fullname }}
-                                        @if(Cache::has('user-is-online-' . $users->id))
+                                    <td>{{ $data->fullname }}
+                                        @if (Cache::has('user-is-online-' . $data->id))
                                             <span style="color: #28B62C;" class="ml-2">online</span>
                                             <span class="indicator online"></span>
                                         @endif
                                     </td>
-                                    <td>{{ $users->username }}</td>
-                                    <td>{{ $users->email }}</td>
+                                    <td>{{ $data->username }}</td>
+                                    <td>{{ $data->email }}</td>
                                     <td>
                                         @php
                                             $color = 'secondary';
-                                            if($users->role == 'super_admin'){
+                                            if ($data->role == 'super_admin') {
                                                 $color = 'warning';
-                                            }elseif ($users->role == 'panitia'){
+                                            } elseif ($data->role == 'panitia') {
                                                 $color = 'primary';
-                                            }elseif ($users->role == 'admin') {
+                                            } elseif ($data->role == 'admin') {
                                                 $color = 'success';
                                             }
                                         @endphp
-                                        <span class="badge badge-{{$color}} font-15">{{ ucwords(str_replace('_', ' ', $users->role)) }}</span>
+                                        <span
+                                            class="badge badge-{{ $color }} font-15">{{ ucwords(str_replace('_', ' ', $data->role)) }}</span>
                                     </td>
                                     <td>
                                         <button class="btn btn-sm btn-warning" data-toggle="modal"
-                                            data-target="#editUser{{ $users->id }}"><i
+                                            data-target="#editUser{{ $data->id }}" onclick="validateFormEdit({{ $data }})"><i
                                                 class="fa fa-edit"></i></button>
-                                        <button type="button" data-toggle="modal" data-target="#deleteConfirmUser"
-                                            class="btn btn-sm btn-danger" onclick="deleteThisUser({{ $users }})"><i
+                                        <button type="button" data-toggle="modal" data-target="#deleteConfirm"
+                                            class="btn btn-sm btn-danger" onclick="deleteThisUser({{ $data }})"><i
                                                 class="fa fa-trash"></i>
                                         </button>
                                     </td>
@@ -135,8 +142,8 @@
         </div>
     </section>
 
-    <div class="modal fade" tabindex="-1" role="dialog" id="tambahUser">
-        <div class="modal-dialog " role="document">
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="tambahUser">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Tambah User</h5>
@@ -220,10 +227,9 @@
                         <div class="form-group">
                             <div class="col-12">
                                 <label for="period">Role</label>
-                                <select class="form-control mb-1" onchange="showFaculty(this.value)" name="role" id="role">
+                                <select class="form-control mb-1" name="role" id="role">
                                     <option value="admin">Admin</option>
                                     <option value="pos">Pos</option>
-                                    <option value="posko">Posko</option>
                                 </select>
                             </div>
                         </div>
@@ -237,30 +243,30 @@
         </div>
     </div>
 
-    @foreach($user as $users)
-    <div class="modal fade" id="editUser{{$users->id}}">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit User</h5>
-                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form class="form-horizontal" action="{{ route('manajemen-user.update', $users->id) }}" id="editUserForm"
-                        method="POST" enctype="multipart/form-data">
+    @foreach ($user as $data)
+        <div class="modal fade" tabindex="-1" role="dialog" id="editUser{{ $data->id }}">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content modal-lg">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('manajemen-user.update', $data->id) }}" method="post" id="editUserForm{{ $data->id }}"
+                        enctype="multipart/form-data">
                         @csrf
                         @method('put')
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type="hidden" id="checkUsername">
-                        <input type="hidden" id="checkEmail">
-
+                        <input type="hidden" value="{{ $data->username }}" id="checkUsername">
+                        <input type="hidden" value="{{ $data->email }}" id="checkEmail">
+                        <div class="modal-body">
                         <div class="form-group">
                             <div class="col-12">
                                 <label for="name">Nama Lengkap</label>
                                 <input class="form-control mb-1 @error('edit_fullname') is-invalid @enderror" type="text"
                                     id="Edit" placeholder="Contoh: Briana White" name="edit_fullname"
-                                    value="{{ old('edit_fullname', $users->fullname) }}" required>
+                                    value="{{ old('edit_fullname', $data->fullname) }}" required>
 
                                 @error('edit_fullname')
                                     <span class="text-danger">{{ $message }}</span>
@@ -273,7 +279,7 @@
                                 <label for="username">Username</label>
                                 <input class="form-control mb-1 @error('edit_username') is-invalid @enderror" type="text"
                                     id="edit_username" placeholder="Contoh: briana67" name="edit_username"
-                                    value="{{ old('edit_username', $users->username) }}" required>
+                                    value="{{ old('edit_username', $data->username) }}" required>
                                 @error('edit_username')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -285,7 +291,7 @@
                                 <label for="email">Email</label>
                                 <input class="form-control mb-1 @error('edit_email') is-invalid @enderror" minlength="3"
                                     maxlength="35" type="email" id="edit_email" placeholder="Contoh: briana67@gmail.com"
-                                    name="edit_email" value="{{ old('edit_email', $users->email) }}" required>
+                                    name="edit_email" value="{{ old('edit_email', $data->email) }}" required>
                                 @error('edit_email')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -297,9 +303,8 @@
                                 <label for="role">Role</label>
                                 <select class="form-control mb-1 @error('edit_role') is-invalid @enderror" name="edit_role"
                                     id="edit_role" required>
-                                    <option value="admin" {{ $users->role == 'admin' ? 'checked' : '' }}>Admin</option>
-                                    <option value="pos" {{ $users->role == 'pos' ? 'checked' : '' }}>Pos</option>
-                                    <option value="posko" {{ $users->role == 'posko' ? 'checked' : '' }}>Posko</option>
+                                    <option value="admin" {{ $data->role == 'admin' ? 'checked' : '' }}>Admin</option>
+                                    <option value="pos" {{ $data->role == 'pos' ? 'checked' : '' }}>Pos</option>
                                 </select>
 
                                 @error('role')
@@ -307,93 +312,94 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger light" data-dismiss="modal">Tutup</button>
-                            <button type="submit" class="btn btn-primary" id="editButton">Simpan Perubahan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        @endforeach
-
-        <div class="modal fade" tabindex="-1" role="dialog" id="deleteConfirmUser">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Hapus</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form action="{{ route('manajemen-user.destroy', '') }}" method="post" id="deleteUserForm">
-                        @csrf
-                        @method('delete')
-                        <div class="modal-body">
-                            Apakah anda yakin untuk <b>menghapus</b> user ini ?
                         </div>
                         <div class="modal-footer bg-whitesmoke br">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
-                            <button type="submit" class="btn btn-primary" id="deleteModalButton">Ya, Hapus Semua</button>
+                            <button type="submit" class="btn btn-primary" id="editUserButton">Ubah</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+    @endforeach
 
-        <div class="modal fade" tabindex="-1" role="dialog" id="deleteAllConfirm">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Hapus Semua</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
+    <div class="modal fade" tabindex="-1" role="dialog" id="deleteConfirm">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Hapus</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('manajemen-user.destroy', '') }}" method="post" id="deleteUserForm">
+                    @csrf
+                    @method('delete')
                     <div class="modal-body">
-                        Apakah anda yakin untuk <b>menghapus semua</b> user ?
+                        Apakah anda yakin untuk <b>menghapus</b> data user ini ?
                     </div>
                     <div class="modal-footer bg-whitesmoke br">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
-                        <button type="button" class="btn btn-primary" id="deleteAllModalButton">Ya, Hapus Semua</button>
+                        <button type="submit" class="btn btn-primary" id="deleteModalButton">Ya, Hapus Data</button>
                     </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="deleteAllConfirm">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Hapus Semua</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Apakah anda yakin untuk <b>menghapus semua</b> pos ?
+                </div>
+                <div class="modal-footer bg-whitesmoke br">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
+                    <button type="button" class="btn btn-primary" id="deleteAllModalButton">Ya, Hapus Semua</button>
                 </div>
             </div>
         </div>
-    @endsection
+    </div>
+@endsection
 
-    @section('js')
-        <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"
-                integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew=="
-                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
-        <script src="https://cdn.datatables.net/fixedheader/3.1.9/js/dataTables.fixedHeader.min.js"></script>
-        <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-        <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
+@section('js')
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"
+        integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.0/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.1.9/js/dataTables.fixedHeader.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap.min.js"></script>
 
-        <script>
-            $(document).ready(function() {
-                var table = $('#user_table').DataTable();
+    <script>
+        $(document).ready(function() {
+            $('#user_table').DataTable();
+        });
+    </script>
+    <script>
+        $('.dropify').dropify();
+    </script>
+
+    <script>
+        $(document).ready(function() {
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
             });
-        </script>
-        <script>
-            $('.dropify').dropify();
-        </script>
 
-        <script>
-            $(document).ready(function() {
-
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-
-                $("#tambahUserForm").validate({
+            $("#tambahUserForm").validate({
                     rules: {
-                        name: {
+                      fullname: {
                             required: true,
                             minlength: 3,
                             maxlength: 30,
@@ -429,7 +435,7 @@
                         },
                     },
                     messages: {
-                        name: {
+                        fullname: {
                             required: "Nama harus di isi",
                             minlength: "Nama tidak boleh kurang dari 3 karakter",
                             maxlength: "Nama tidak boleh lebih dari 30 karakter"
@@ -459,16 +465,17 @@
                         role: {
                             required: "Role harus di isi"
                         },
-                    }
+                    },
                     submitHandler: function(form) {
                         $("#tambahButton").prop('disabled', true);
                         form.submit();
                     }
                 });
-            });
+        });
 
-            $("#editUserForm").validate({
-                rules: {
+        function validateFormEdit (data) {
+        $("#editUserForm" + data.id).validate({
+          rules: {
                         edit_fullname: {
                             required: true,
                             minlength: 3,
@@ -511,7 +518,7 @@
                         },
                     },
                     messages: {
-                        edit_name: {
+                        edit_fullname: {
                             required: "Nama harus di isi",
                             minlength: "Nama tidak boleh kurang dari 3 karakter",
                             maxlength: "Nama tidak boleh lebih dari 30 karakter"
@@ -532,27 +539,15 @@
                         edit_role: {
                             required: "Role harus di isi"
                         },
-                    }
+                    },
                 submitHandler: function(form) {
-                    $("#editPosButton").prop('disabled', true);
+                    $("#editUserButton").prop('disabled', true);
                     form.submit();
                 }
             });
+          }
 
-            $("#deleteAllModalButton").click(function() {
-                $(this).attr('disabled', true);
-                $("#destroyAllForm").submit();
-            });
-
-            const deleteUser = $("#deleteUserForm").attr('action');
-
-            function deleteThisUser(data) {
-                $("#deleteUserForm").attr('action', `${deleteUser}/${data.id}`);
-            }
-
-            $("#deleteAllButton").attr('disabled', true);
-
-        // password show/hide toggle
+            // password show/hide toggle
         $(".toggle-password").click(function() {
             $(this).toggleClass("far fa-eye-slash");
             var password = document.getElementById("passwordId");
@@ -605,5 +600,18 @@
             }
     
         });
-        </script>
-    @endsection
+
+        $("#deleteAllModalButton").click(function() {
+            $(this).attr('disabled', true);
+            $("#destroyAllForm").submit();
+        });
+
+        const deleteUser = $("#deleteUserForm").attr('action');
+
+        function deleteThisUser(data) {
+            $("#deleteUserForm").attr('action', `${deleteUser}/${data.id}`);
+        }
+
+        $("#deleteAllButton").attr('disabled', true);
+    </script>
+@endsection

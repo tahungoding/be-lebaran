@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-  <title>Login / Jokiin Aja</title>
+  <title>Login / Sumedang LRT</title>
 
   <!-- General CSS Files -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -53,7 +53,7 @@
       <div class="container mt-5">
         <div class="row">
           <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
-            <div class="login-brand">
+            <div class="login-brand p-1" style="background-color: #ffffff !important;border-radius: 15px;">
               @foreach($web as $webs)
               <a href="{{ url('/') }}"><img src="{{ Storage::url($webs->logo) }}" alt="logo" width="100"></a>
               @endforeach

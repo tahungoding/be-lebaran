@@ -8,6 +8,7 @@ use App\Models\Web;
 use App\Models\Pos;
 use App\Models\PosGatur;
 use App\Models\Kemacetan;
+use App\Models\Kecelakaan;
 
 class DashboardController extends Controller
 {
@@ -22,6 +23,7 @@ class DashboardController extends Controller
         $data['pos'] = Pos::count();
         $data['pos_gatur'] = PosGatur::count();
         $data['kemacetan'] = Kemacetan::count();
+        $data['kecelakaan'] = Kecelakaan::count();
         return view('back.dashboard.index', $data);
     }
 

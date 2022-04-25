@@ -98,7 +98,7 @@
                     <td>{{ $posdata->longitude }}</td>
                     <td>
                         <button class="btn btn-sm btn-warning" data-toggle="modal"
-                            data-target="#editPosGatur{{$posdata->id}}"
+                            data-target="#editPosGatur{{$posdata->id}}" onclick="validateFormEdit({{ $posdata }})"
                             ><i class="fa fa-edit"></i></button>
                         <button type="button" data-toggle="modal" data-target="#deleteConfirm"
                             class="btn btn-sm btn-danger" onclick="deleteThisPosGatur({{ $posdata }})"><i
@@ -158,7 +158,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="{{ route('pos-gatur.update', $Allpos->id) }}" method="post" id="editPosGaturForm"
+      <form action="{{ route('pos-gatur.update', $Allpos->id) }}" method="post" id="editPosGaturForm{{$Allpos->id}}"
         enctype="multipart/form-data">
         @csrf
         @method('PUT')
@@ -203,11 +203,11 @@
         @csrf
         @method('delete')
         <div class="modal-body">
-          Apakah anda yakin untuk <b>menghapus</b> pos gatur ini ?
+          Apakah anda yakin untuk <b>menghapus</b> data pos gatur ini ?
         </div>
         <div class="modal-footer bg-whitesmoke br">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
-          <button type="submit" class="btn btn-primary" id="deleteModalButton">Ya, Hapus Semua</button>
+          <button type="submit" class="btn btn-primary" id="deleteModalButton">Ya, Hapus Data</button>
         </div>
       </form>
     </div>
@@ -302,7 +302,8 @@
   });
 });
 
-  $("#editPosGaturForm").validate({
+function validateFormEdit(data) {
+  $("#editPosGaturForm" + data.id).validate({
       rules: {
         edit_nama:{
               required: true,
@@ -345,6 +346,7 @@
             form.submit();
       }
   });
+}
 
 $("#deleteAllModalButton").click(function() {
     $(this).attr('disabled', true); 

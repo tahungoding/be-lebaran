@@ -107,8 +107,7 @@
                     </td>
                     <td>
                         <button class="btn btn-sm btn-warning" data-toggle="modal"
-                            data-target="#editPos{{$posdata->id}}"
-                            ><i class="fa fa-edit"></i></button>
+                            data-target="#editPos{{$posdata->id}}" onclick="validateFormEdit({{ $posdata }})"><i class="fa fa-edit"></i></button>
                         <button type="button" data-toggle="modal" data-target="#deleteConfirm"
                             class="btn btn-sm btn-danger" onclick="deleteThisPos({{ $posdata }})"><i
                                 class="fa fa-trash"></i>
@@ -179,7 +178,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="{{ route('pos.update', $Allpos->id) }}" method="post" id="editPosForm"
+      <form action="{{ route('pos.update', $Allpos->id) }}" method="post" id="editPosForm{{$Allpos->id}}"
         enctype="multipart/form-data">
         @csrf
         @method('PUT')
@@ -234,11 +233,11 @@
         @csrf
         @method('delete')
         <div class="modal-body">
-          Apakah anda yakin untuk <b>menghapus</b> pos ini ?
+          Apakah anda yakin untuk <b>menghapus</b> data pos ini ?
         </div>
         <div class="modal-footer bg-whitesmoke br">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
-          <button type="submit" class="btn btn-primary" id="deleteModalButton">Ya, Hapus Semua</button>
+          <button type="submit" class="btn btn-primary" id="deleteModalButton">Ya, Hapus Data</button>
         </div>
       </form>
     </div>
@@ -330,7 +329,8 @@ $(document).ready(function() {
   });
 });
 
-  $("#editPosForm").validate({
+function validateFormEdit(data) {
+  $("#editPosForm" + data.id).validate({
       rules: {
         edit_nama:{
               required: true,
@@ -369,7 +369,7 @@ $(document).ready(function() {
             form.submit();
       }
   });
-
+}
 $("#deleteAllModalButton").click(function() {
     $(this).attr('disabled', true); 
     $("#destroyAllForm").submit();
