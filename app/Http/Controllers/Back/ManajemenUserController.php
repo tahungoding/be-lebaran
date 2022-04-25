@@ -19,7 +19,7 @@ class ManajemenUserController extends Controller
      */
     public function index()
     {
-        if(Auth::user()->role == 'pos' || Auth::user()->role == 'posko') {
+        if(Auth::user()->role == 'pos') {
             return redirect()->back();
         }
         
@@ -143,13 +143,14 @@ class ManajemenUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
+        $user = User::find($id);
         
         $this->validate($request, [
             'edit_fullname' => 'required|string|min:3|max:35',
-            'edit_username' => "required|string|min:3|unique:users,username,$user->id|max:35",
-            'edit_email' => "required|string|min:5|unique:users,email,$user->id|max:35",
+            'edit_username' => "required|string|min:3",
+            'edit_email' => "required|string|min:5",
             'edit_role' => 'required',
         ]);
 
@@ -174,8 +175,9 @@ class ManajemenUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
+        $user = User::find($id);
         $user->delete()
             ? Alert::success('Sukses', "User berhasil dihapus.")
             : Alert::error('Error', "User gagal dihapus!");

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Web;
 use Storage;
 use Alert;
+use Auth;
 
 class ProfileWebController extends Controller
 {
@@ -17,6 +18,10 @@ class ProfileWebController extends Controller
      */
     public function index()
     {
+        if(Auth::user()->role == 'pos') {
+            return redirect()->back();
+        }
+        
         $data['web'] = Web::all();
         return view('back.profile_web.index', $data);
     }

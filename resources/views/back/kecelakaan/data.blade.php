@@ -1,5 +1,5 @@
 @extends('layouts.main', ['web' => $web])
-@section('title', 'Kemacetan')
+@section('title', 'Kecelakaan')
 @section('css')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css"
@@ -38,13 +38,20 @@
   }
 
   #map { height: 300px }
+  .card {
+    border-radius: 10px;
+  }
 
   #map-edit { height: 300px }
+  .card {
+    border-radius: 10px;
+  }
 
   #map-detail { height: 300px }
   .card {
     border-radius: 10px;
   }
+
 
   label.error {
     color: #f1556c;
@@ -79,10 +86,10 @@
 @section('container')
 <section class="section">
   <div class="section-header">
-    <h1>Kemacetan</h1>
+    <h1>Kecelakaan</h1>
     <div class="section-header-breadcrumb">
       <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-      <div class="breadcrumb-item">Kemacetan</div>
+      <div class="breadcrumb-item">Kecelakaan</div>
     </div>
   </div>
 
@@ -92,7 +99,7 @@
         <div class="card">
           <div class="card-header">
             <div class="d-flex justify-content-between w-100">
-              <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#tambahKemacetan"><i
+              <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#tambahKecelakaan"><i
                   class="fas fa-plus-circle"></i></button>
             </div>
           </div>
@@ -102,7 +109,7 @@
     </div>
     <div class="card">
       <div class="card-body">
-        <table id="kemacetan_table" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+        <table id="kecelakaan_table" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
             <thead>
                 <tr>
                     <th>#</th>
@@ -115,17 +122,17 @@
                 $increment = 1;
             @endphp
             <tbody>
-                @foreach($kemacetan as $data)
+                @foreach($kecelakaan as $data)
                 <tr>
                     <td>{{ $increment++ }}</td>
                     <td>{{ $data->lokasi }}</td>
-                    <td><a href="javascript:void(0)" data-target="#detailKemacetan{{ $data->id }}" data-toggle="modal"><i class="fas fa-eye"></i></a></td>
+                    <td><a href="javascript:void(0)" data-target="#detailKecelakaan{{ $data->id }}" data-toggle="modal"><i class="fas fa-eye"></i></a></td>
                     <td>
                         <button class="btn btn-sm btn-warning" data-toggle="modal"
-                            data-target="#editKemacetan{{$data->id}}" onclick="validateFormEdit({{ $data }})"
+                            data-target="#editKecelakaan{{$data->id}}" onclick="validateFormEdit({{ $data }})"
                             ><i class="fa fa-edit"></i></button>
                         <button type="button" data-toggle="modal" data-target="#deleteConfirm"
-                            class="btn btn-sm btn-danger" onclick="deleteThisKemacetan({{ $data }})"><i
+                            class="btn btn-sm btn-danger" onclick="deleteThisKecelakaan({{ $data }})"><i
                                 class="fa fa-trash"></i>
                         </button>
                     </td>
@@ -138,16 +145,16 @@
   </div>
 </section>
 
-<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="tambahKemacetan">
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="tambahKecelakaan">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Tambah Kemacetan</h5>
+        <h5 class="modal-title">Tambah Kecelakaan</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="{{ route('kemacetan.store') }}" method="post" id="tambahKemacetanForm" enctype="multipart/form-data">
+      <form action="{{ route('kecelakaan.store') }}" method="post" id="tambahKecelakaanForm" enctype="multipart/form-data">
         @csrf
         <div class="modal-body">
           <div class="form-group">
@@ -162,11 +169,7 @@
             <label for="detail_kejadian">Detail Kejadian</label>
             <textarea name="detail_kejadian" class="form-control my-editor" id="my-editor" style="height: 30vh;"></textarea>
           </div>
-          {{-- <div class="form-group">
-            <label for="file_pendukung">File Pendukung</label>
-            <input type="file" class="form-control dropify" name="file_pendukung"
-                    data-allowed-file-extensions="png jpg jpeg svg" data-show-remove="false">
-          </div> --}}
+          
           <div class="form-group">
             <label for="waktu">Waktu</label>
             <input type="time" name="waktu" class="form-control">
@@ -191,33 +194,33 @@
   </div>
 </div>
 
-@foreach ($kemacetan as $kemacetanData)
-<div class="modal fade" tabindex="-1" role="dialog" id="editKemacetan{{$kemacetanData->id}}">
+@foreach ($kecelakaan as $data)
+<div class="modal fade" tabindex="-1" role="dialog" id="editKecelakaan{{$data->id}}">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content modal-lg">
       <div class="modal-header">
-        <h5 class="modal-title">Edit Kemacetan</h5>
+        <h5 class="modal-title">Edit Kecelakaan</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="{{ route('kemacetan.update', $kemacetanData->id) }}" method="post" id="editKemacetanForm{{$kemacetanData->id}}"
+      <form action="{{ route('kecelakaan.update', $data->id) }}" method="post" id="editKecelakaanForm{{$data->id}}"
         enctype="multipart/form-data">
         @csrf
         @method('PUT')
-        <input type="hidden" id="checkKemacetanName" value="{{ $kemacetanData->nama }}">
+        <input type="hidden" id="checkKecelakaanName" value="{{ $data->nama }}">
         <div class="modal-body">
             <div class="form-group">
                 <label for="lokasi">Lokasi</label>
-                <input type="text" class="form-control" name="edit_lokasi" value="{{ $kemacetanData->lokasi }}" placeholder="Lokasi">
+                <input type="text" class="form-control" name="edit_lokasi" value="{{ $data->lokasi }}" placeholder="Lokasi">
               </div>
               <div class="form-group">
                 <label for="ringkas_kejadian">Ringkasan Kejadian</label>
-                <textarea name="edit_ringkas_kejadian" class="form-control" style="height: 20vh;">{{ $kemacetanData->ringkas_kejadian }}</textarea>
+                <textarea name="edit_ringkas_kejadian" class="form-control" style="height: 20vh;">{{ $data->ringkas_kejadian }}</textarea>
               </div>
               <div class="form-group">
                 <label for="detail_kejadian">Detail Kejadian</label>
-                <textarea name="edit_detail_kejadian" id="my-editor-edit" class="form-control my-editor-edit" style="height: 30vh;">{{ $kemacetanData->detail_kejadian }}</textarea>
+                <textarea name="edit_detail_kejadian" id="my-editor-edit" class="form-control my-editor-edit" style="height: 30vh;">{{ $data->detail_kejadian }}</textarea>
               </div>
               {{-- <div class="form-group">
                 <label for="file_pendukung">File Pendukung</label>
@@ -228,16 +231,16 @@
             </div> --}}
               <div class="form-group">
                 <label for="waktu">Waktu</label>
-                <input type="time" name="edit_waktu" class="form-control" value="{{ $kemacetanData->waktu }}">
+                <input type="time" name="edit_waktu" class="form-control" value="{{ $data->waktu }}">
               </div>
               <div id="map-edit"></div>
               <div class="form-group">
                 <label for="latitude">Latitude</label>
-                <input type="text" name="edit_latitude" id="edit_latitude" class="form-control" value="{{ $kemacetanData->latitude }}">
+                <input type="text" id="editLatitude" name="edit_latitude" class="form-control" value="{{ $data->latitude }}">
               </div>
               <div class="form-group">
                 <label for="longitude">Longitude</label>
-                <input type="text" name="edit_longitude" id="edit_longitude" class="form-control" value="{{ $kemacetanData->longitude }}">
+                <input type="text" id="editLongitude" name="edit_longitude" class="form-control" value="{{ $data->longitude }}">
               </div>
         </div>
         <div class="modal-footer bg-whitesmoke br">
@@ -250,12 +253,12 @@
 </div>
 @endforeach
 
-@foreach ($kemacetan as $kemacetanData)
-<div class="modal fade" tabindex="-1" role="dialog" id="detailKemacetan{{$kemacetanData->id}}">
+@foreach ($kecelakaan as $data)
+<div class="modal fade" tabindex="-1" role="dialog" id="detailKecelakaan{{$data->id}}">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Detail Kemacetan</h5>
+        <h5 class="modal-title">Detail Kecelakaan</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -263,32 +266,32 @@
         <div class="modal-body">
             <div class="form-group">
                 <label for="lokasi">Lokasi</label>
-                <input type="text" class="form-control" value="{{ $kemacetanData->lokasi }}" placeholder="Lokasi" readonly>
+                <input type="text" class="form-control" value="{{ $data->lokasi }}" placeholder="Lokasi" readonly>
               </div>
               <div class="form-group">
                 <label for="ringkas_kejadian">Ringkasan Kejadian</label>
-                <textarea class="form-control" readonly style="height: 20vh;">{{ $kemacetanData->ringkas_kejadian }}</textarea>
+                <textarea class="form-control" readonly style="height: 20vh;">{{ $data->ringkas_kejadian }}</textarea>
               </div>
               <div class="form-group">
                 <label for="detail_kejadian">Detail Kejadian</label>
-                <textarea class="form-control my-editor-detail" id="my-editor-detail" readonly style="height: 30vh;">{{ $kemacetanData->detail_kejadian }}</textarea>
+                <textarea class="form-control my-editor-detail" id="my-editor-detail" readonly style="height: 30vh;">{{ $data->detail_kejadian }}</textarea>
               </div>
               <div class="form-group">
                 <label for="waktu">Waktu</label>
-                <input type="time" class="form-control" value="{{ $kemacetanData->waktu }}" readonly>
+                <input type="time" class="form-control" value="{{ $data->waktu }}" readonly>
               </div>
               <div id="map-detail"></div>
               <div class="form-group">
                 <label for="latitude">Latitude</label>
-                <input type="text" class="form-control" value="{{ $kemacetanData->latitude }}" readonly>
+                <input type="text" class="form-control" value="{{ $data->latitude }}" readonly>
               </div>
               <div class="form-group">
                 <label for="longitude">Longitude</label>
-                <input type="text" class="form-control" value="{{ $kemacetanData->longitude }}" readonly>
+                <input type="text" id="" class="form-control" value="{{ $data->longitude }}" readonly>
               </div>
               {{-- <div class="form-group">
                 <label for="file_pendukung">File Pendukung</label>
-                <a href="">{{ $kemacetanData->file_pendukung }}</a>
+                <a href="">{{ $data->file_pendukung }}</a>
               </div> --}}
         </div>
         <div class="modal-footer bg-whitesmoke br">
@@ -308,11 +311,11 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="{{ route('kemacetan.destroy', '') }}" method="post" id="deleteKemacetanForm">
+      <form action="{{ route('kecelakaan.destroy', '') }}" method="post" id="deleteKecelakaanForm">
         @csrf
         @method('delete')
         <div class="modal-body">
-          Apakah anda yakin untuk <b>menghapus</b> data kemacetan ini ?
+          Apakah anda yakin untuk <b>menghapus</b> data kecelakaan ini ?
         </div>
         <div class="modal-footer bg-whitesmoke br">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
@@ -357,7 +360,7 @@
 
 <script>
     $(document).ready(function() {
-    $('#kemacetan_table').DataTable();
+    $('#kecelakaan_table').DataTable();
 });
 </script>
 <script>
@@ -373,7 +376,7 @@
       }
   });
   
-  $("#tambahKemacetanForm").validate({
+  $("#tambahKecelakaanForm").validate({
       rules: {
           lokasi:{
               required: true,
@@ -422,7 +425,7 @@
 });
 
 function validateFormEdit(data) {
-  $("#editKemacetanForm" + data.id).validate({
+  $("#editKecelakaanForm" + data.id).validate({
       rules: {
           edit_lokasi:{
               required: true,
@@ -470,16 +473,15 @@ function validateFormEdit(data) {
   });
 }
 
-
 $("#deleteAllModalButton").click(function() {
     $(this).attr('disabled', true); 
     $("#destroyAllForm").submit();
 });
 
-const deleteKemacetan = $("#deleteKemacetanForm").attr('action');
+const deleteKecelakaan = $("#deleteKecelakaanForm").attr('action');
 
-  function deleteThisKemacetan(data) {
-    $("#deleteKemacetanForm").attr('action', `${deleteKemacetan}/${data.id}`);
+  function deleteThisKecelakaan(data) {
+    $("#deleteKecelakaanForm").attr('action', `${deleteKecelakaan}/${data.id}`);
   }
 
   $("#deleteAllButton").attr('disabled', true); 
@@ -496,9 +498,9 @@ const deleteKemacetan = $("#deleteKemacetanForm").attr('action');
   };
 </script>
 <script>
-    CKEDITOR.replaceAll('my-editor', options);
-    CKEDITOR.replaceAll('my-editor-edit', options);
-    CKEDITOR.replaceAll('my-editor-detail', options);
+    CKEDITOR.replaceAll('my-editor');
+    CKEDITOR.replaceAll('my-editor-edit');
+    CKEDITOR.replaceAll('my-editor-detail');
 </script>
 
 <script>
@@ -547,8 +549,8 @@ const deleteKemacetan = $("#deleteKemacetanForm").attr('action');
   mapEdit.on('click', (e)=>{
     gcs.reverse().latlng(e.latlng).run((err, res)=>{
       if(err) return;
-      document.getElementById('edit_latitude').value = e.latlng.lat
-      document.getElementById('edit_longitude').value = e.latlng.lng
+      document.getElementById('editLatitude').value = e.latlng.lat
+      document.getElementById('editLongitude').value = e.latlng.lng
       L.marker(res.latlng).addTo(mapEdit).bindPopup(res.address.Match_addr).openPopup();
     });
   });
@@ -562,6 +564,17 @@ const deleteKemacetan = $("#deleteKemacetanForm").attr('action');
   }).addTo(mapDetail);
 
   var gcs = L.esri.Geocoding.geocodeService();
+
+  // mapDetail.on('click', (e)=>{
+  //   gcs.reverse().latlng(e.latlng).run((err, res)=>{
+  //     if(err) return;
+  //     document.getElementById('editLatitude').value = e.latlng.lat
+  //     document.getElementById('editLongitude').value = e.latlng.lng
+  //     L.marker(res.latlng).addTo(mapEdit).bindPopup(res.address.Match_addr).openPopup();
+  //   });
+  // });
+
+  
   
 </script>
 @endsection

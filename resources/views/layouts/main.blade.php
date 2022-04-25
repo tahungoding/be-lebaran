@@ -103,6 +103,12 @@
                 </a>
               </div>
               <div class="search-item">
+                <a href="{{ route('kecelakaan.index') }}" style="color: #78828a;">
+                  <i class="fas fa-car-crash mr-1" style="width: 30px"></i>
+                  Kecelakaan
+                </a>
+              </div>
+              <div class="search-item">
                 <a href="{{ route('manajemen-user.index') }}" style="color: #78828a;">
                   <i class="fas fa-users mr-1" style="width: 30px"></i>
                   Manajemen User
@@ -140,15 +146,20 @@
             @endforeach
           </div>
           <div class="sidebar-brand sidebar-brand-sm">
-            <a href="{{ route('dashboard.index') }}">TH</a>
+            <a href="{{ route('dashboard.index') }}">SLRT</a>
           </div>
           <ul class="sidebar-menu mt-4">
               <li class="{{ request()->routeIs('dashboard.index') ? 'active' : '' }}"><a class="nav-link" @if(request()->routeIs('dashboard.index') && isset($primary_color)) style="color: {{$primary_color}};" @endif href="{{ route('dashboard.index') }}"><i class="fas fa-fire"></i> <span>Dashboard</span></a></li>
+            @if(Auth::user()->role == 'admin')
               <li class="{{ request()->routeIs('profile-web.index') ? 'active' : '' }}"><a class="nav-link" @if(request()->routeIs('profile-web.index') && isset($primary_color)) style="color: {{$primary_color}};" @endif href="{{ route('profile-web.index') }}"><i class="fas fa-id-card"></i> <span>Profile Web</span></a></li>
+            @endif
               <li class="{{ request()->routeIs('pos.index') ? 'active' : '' }}"><a class="nav-link" @if(request()->routeIs('pos.index') && isset($primary_color)) style="color: {{$primary_color}};" @endif href="{{ route('pos.index') }}"><i class="fas fa-archway"></i> <span>Pos</span></a></li>
               <li class="{{ request()->routeIs('pos-gatur.index') ? 'active' : '' }}"><a class="nav-link" @if(request()->routeIs('pos-gatur.index') && isset($primary_color)) style="color: {{$primary_color}};" @endif href="{{ route('pos-gatur.index') }}"><i class="fas fa-road"></i> <span>Pos Gatur</span></a></li>
               <li class="{{ request()->routeIs('kemacetan.index') ? 'active' : '' }}"><a class="nav-link" @if(request()->routeIs('kemacetan.index') && isset($primary_color)) style="color: {{$primary_color}};" @endif href="{{ route('kemacetan.index') }}"><i class="fas fa-traffic-light"></i> <span>Kemacetan</span></a></li>
+              <li class="{{ request()->routeIs('kecelakaan.index') ? 'active' : '' }}"><a class="nav-link" @if(request()->routeIs('kecelakaan.index') && isset($primary_color)) style="color: {{$primary_color}};" @endif href="{{ route('kecelakaan.index') }}"><i class="fas fa-car-crash"></i> <span>Kecelakaan</span></a></li>
+            @if(Auth::user()->role == 'admin')
               <li class="{{ request()->routeIs('manajemen-user.index') ? 'active' : '' }}"><a class="nav-link" @if(request()->routeIs('manajemen-user.index') && isset($primary_color)) style="color: {{$primary_color}};" @endif href="{{ route('manajemen-user.index') }}"><i class="fas fa-users"></i> <span>Manajemen User</span></a></li>
+            @endif
             </ul>
         </aside>
       </div>
