@@ -8,6 +8,7 @@ use App\Models\Kemacetan;
 use App\Models\Web;
 use Alert;
 use Storage;
+use Illuminate\Support\Facades\Auth;
 
 class KemacetanController extends Controller
 {
@@ -18,7 +19,9 @@ class KemacetanController extends Controller
      */
     public function index()
     {
-        $data['kemacetan'] = Kemacetan::all();
+        $data['kemacetan'] = Kemacetan::when(Auth::user()->role == 'pos', function ($query) {
+            $query->where('pos_id', Auth::user()->pos_id);
+        })->get();
         $data['web'] = Web::all();
         return view('back.kemacetan.data', $data);
     }
@@ -73,7 +76,12 @@ class KemacetanController extends Controller
             'waktu' => $request->waktu,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
+            'user_id' => Auth::user()->id
         ];
+
+        if (Auth::user()->role != 'admin') {
+            $data['pos_id'] = Auth::user()->pos_id;
+        }
 
         Kemacetan::create($data)
         ? Alert::success('Berhasil', 'Data Kemacetan telah berhasil ditambahkan!')

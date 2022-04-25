@@ -81,6 +81,7 @@
                 <tr>
                     <th>#</th>
                     <th>Nama</th>
+                    <th>Alamat</th>
                     <th>Jenis Pos</th>
                     <th>Kecamatan</th>
                     <th>Aksi</th>
@@ -94,6 +95,7 @@
                 <tr>
                     <td>{{ $increment++ }}</td>
                     <td>{{ $posdata->nama }}</td>
+                    <td>{{ $posdata->alamat }}</td>
                     <td>{{ ucwords(str_replace("_", ' ', $posdata->jenis_pos)) }}</td>
                    
                     <td>
@@ -139,9 +141,13 @@
             <input type="text" class="form-control" name="nama" placeholder="Nama Pos">
           </div>
           <div class="form-group">
+            <label for="alamat">Alamat</label>
+            <input type="text" class="form-control" name="alamat" placeholder="Alamat Pos">
+          </div>
+          <div class="form-group">
             <label for="jenis_pos">Jenis Pos</label>
             <select class="form-control" name="jenis_pos" style="color:#6c757d !important;">
-              <option value="">Pilih Kecamatan</option>
+              <option value="">Pilih Jenis Pos</option>
               <option value="pos_pelayanan">Pos Pelayanan</option>
               <option value="pos_terpadu">Pos Terpadu</option>
               <option value="pos_pengaman">Pos Pengaman</option>
@@ -157,6 +163,16 @@
                 </option>
               @endforeach
             </select>
+          </div>
+          <div class="form-group">
+            <label for="latitude">Latitude</label>
+            <input type="text" class="form-control" name="latitude" placeholder="latitude Pos"
+              value="">
+          </div>
+          <div class="form-group">
+            <label for="longitude">Longitude</label>
+            <input type="text" class="form-control" name="longitude" placeholder="longitude Pos"
+              value="">
           </div>
         </div>
         <div class="modal-footer bg-whitesmoke br">
@@ -190,9 +206,14 @@
               value="{{ $Allpos->nama }}">
           </div>
           <div class="form-group">
+            <label for="edit_alamat">Alamat</label>
+            <input type="text" class="form-control" name="edit_alamat" id="editAlamat" placeholder="Alamat Pos"
+              value="{{ $Allpos->alamat }}">
+          </div>
+          <div class="form-group">
             <label for="edit_jenis_pos">Jenis Pos</label>
             <select class="form-control" name="edit_jenis_pos" style="color:#6c757d !important;">
-              <option value="">Pilih Kecamatan</option>
+              <option value="">Pilih Jenis Pos</option>
               <option value="pos_pelayanan" {{ $Allpos->jenis_pos == 'pos_pelayanan' ? 'selected' : '' }}>Pos Pelayanan</option>
               <option value="pos_terpadu" {{ $Allpos->jenis_pos == 'pos_terpadu' ? 'selected' : '' }}>Pos Terpadu</option>
               <option value="pos_pengaman" {{ $Allpos->jenis_pos == 'pos_pengaman' ? 'selected' : '' }}>Pos Pengaman</option>
@@ -208,6 +229,16 @@
                 </option>
               @endforeach
             </select>
+          </div>
+          <div class="form-group">
+            <label for="edit_latitude">Latitude</label>
+            <input type="text" class="form-control" name="edit_latitude" id="editLatitude" placeholder="latitude Pos"
+              value="{{ $Allpos->latitude }}">
+          </div>
+          <div class="form-group">
+            <label for="edit_longitude">Longitude</label>
+            <input type="text" class="form-control" name="edit_longitude" id="editLongitude" placeholder="longitude Pos"
+              value="{{ $Allpos->longitude }}">
           </div>
         </div>
         <div class="modal-footer bg-whitesmoke br">

@@ -8,6 +8,7 @@ use App\Models\Kecelakaan;
 use App\Models\Web;
 use Alert;
 use Storage;
+use Illuminate\Support\Facades\Auth;
 
 class KecelakaanController extends Controller
 {
@@ -18,7 +19,9 @@ class KecelakaanController extends Controller
      */
     public function index()
     {
-        $data['kecelakaan'] = Kecelakaan::all();
+        $data['kecelakaan'] = Kecelakaan::when(Auth::user()->role == 'pos', function ($query) {
+            $query->where('pos_id', Auth::user()->pos_id);
+        })->get();
         $data['web'] = Web::all();
         return view('back.kecelakaan.data', $data);
     }
@@ -73,7 +76,12 @@ class KecelakaanController extends Controller
             'waktu' => $request->waktu,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
+            'user_id' => Auth::user()->id
         ];
+
+        if (Auth::user()->role != 'admin') {
+            $data['pos_id'] = Auth::user()->pos_id;
+        }
 
         Kecelakaan::create($data)
         ? Alert::success('Berhasil', 'Data Kecelakaan telah berhasil ditambahkan!')

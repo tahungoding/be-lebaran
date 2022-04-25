@@ -11,7 +11,5 @@ class Kemacetan extends Model
 
     protected $table = "kemacetan";
 
-    protected $fillable = [
-        'lokasi', 'ringkas_kejadian', 'detail_kejadian', 'file_pendukung', 'waktu', 'latitude', 'longitude'
-    ];
+    protected $guarded = ['id'];
 }

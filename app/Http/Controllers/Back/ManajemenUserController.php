@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Web;
+use App\Models\Pos;
 use Alert;
 
 class ManajemenUserController extends Controller
@@ -25,6 +26,7 @@ class ManajemenUserController extends Controller
         
         $data['user'] = User::orderBy('id')->get();
         $data['web'] = Web::all();
+        $data['pos'] = Pos::all();
 
         return view('back.manajemen_user.data', $data);
     }
@@ -90,13 +92,19 @@ class ManajemenUserController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
+        $validate = [
             'fullname' => 'required|string|min:3|max:35',
             'username' => 'required|string|min:3|unique:users|max:35',
-            'email' => 'required|string|min:5|unique:users|max:35',
+            'email' => 'required|string|min:5|unique:users',
             'password' => 'required|confirmed',
             'role' => 'required',
-        ]);
+        ];
+        if (isset($_POST['role'])) {
+            if ($_POST['role'] != 'admin') {
+                $validate['pos_id'] = 'required';
+            }
+        }
+        $this->validate($request, $validate);
 
         $data = [
             'fullname' => $request->fullname,
@@ -104,6 +112,7 @@ class ManajemenUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'pos_id' => $request->pos_id ?: null,
         ];
 
 

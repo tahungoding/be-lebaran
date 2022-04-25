@@ -10,8 +10,10 @@ class PosGatur extends Model
     use HasFactory;
 
     protected $table = "pos_gatur";
+    protected $guarded = ['id'];
 
-    protected $fillable = [
-        'nama', 'latitude', 'longitude'
-    ];
+    public function pos()
+    {
+        return $this->belongsTo(Pos::class);
+    }
 }

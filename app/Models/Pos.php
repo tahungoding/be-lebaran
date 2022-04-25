@@ -10,11 +10,7 @@ class Pos extends Model
     use HasFactory;
 
     protected $table = "pos";
-
-   
-    protected $fillable = [
-        'nama', 'jenis_pos', 'district_id'
-    ];
+    protected $guarded = ['id'];
 
     public function medicineType() 
     {

@@ -115,7 +115,7 @@
                                             $color = 'secondary';
                                             if ($data->role == 'super_admin') {
                                                 $color = 'warning';
-                                            } elseif ($data->role == 'panitia') {
+                                            } elseif ($data->role == 'pos') {
                                                 $color = 'primary';
                                             } elseif ($data->role == 'admin') {
                                                 $color = 'success';
@@ -177,7 +177,7 @@
                             <div class="col-12">
                                 <label for="period">Email</label>
                                 <input class="form-control mb-1 @error('email') is-invalid @enderror" minlength="3"
-                                    maxlength="35" type="email" id="email" placeholder="Contoh: briana67@gmail.com"
+                                    type="email" id="email" placeholder="Contoh: briana67@gmail.com"
                                     name="email" value="{{ old('email') }}">
                             </div>
                         </div>
@@ -227,12 +227,24 @@
                         <div class="form-group">
                             <div class="col-12">
                                 <label for="period">Role</label>
-                                <select class="form-control mb-1" name="role" id="role">
+                                <select class="form-control mb-1" onchange="showPos(this.value)" name="role" id="role">
                                     <option value="admin">Admin</option>
                                     <option value="pos">Pos</option>
                                 </select>
                             </div>
                         </div>
+
+                        <div class="form-group" id="pos_section" style="display: none">
+                            <div class="col-12">
+                                <label for="period">Pilih Pos</label>
+                                <select class="form-control mb-1" name="pos_id" id="pos_id">
+                                    @foreach ($pos as $item)
+                                        <option value="{{$item->id}}">{{$item->nama}} ({{$item->alamat}})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="modal-footer bg-whitesmoke br">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
@@ -416,7 +428,7 @@
                         email: {
                             required: true,
                             minlength: 3,
-                            maxlength: 30,
+                            maxlength: 100,
                             remote: {
                                 url: "{{ route('user.checkEmail') }}",
                                 type: "post",
@@ -451,7 +463,7 @@
                             required: "Email harus di isi",
                             email: "Email yang di isikan harus valid",
                             minlength: "Email tidak boleh kurang dari 3 karakter",
-                            maxlength: "Email tidak boleh lebih dari 30 karakter",
+                            maxlength: "Email tidak boleh lebih dari 100 karakter",
                             remote: "Email sudah tersedia"
                         },
                         password: {
@@ -613,5 +625,13 @@
         }
 
         $("#deleteAllButton").attr('disabled', true);
+    </script>
+    <script>
+        function showPos(val) {
+            $('#pos_section').hide();
+            if (val == 'pos') {
+                $('#pos_section').show();
+            }
+        }
     </script>
 @endsection

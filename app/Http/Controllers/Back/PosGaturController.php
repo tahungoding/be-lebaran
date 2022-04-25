@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Back;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PosGatur;
+use App\Models\Pos;
 use App\Models\Web;
 use Alert;
 use Storage;
@@ -19,6 +20,7 @@ class PosGaturController extends Controller
     public function index()
     {
         $data['pos_gatur'] = PosGatur::all();
+        $data['pos'] = Pos::all();
         $data['web'] = Web::all();
         return view('back.pos_gatur.data', $data);
     }
@@ -66,6 +68,7 @@ class PosGaturController extends Controller
         
         $data = [
             'nama' => $request->nama,
+            'pos_id' => $request->pos_id,
             'longitude' => $request->longitude,
             'latitude' => $request->latitude,
         ];

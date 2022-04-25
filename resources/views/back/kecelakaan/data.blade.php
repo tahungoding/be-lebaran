@@ -174,7 +174,8 @@
             <label for="waktu">Waktu</label>
             <input type="time" name="waktu" class="form-control">
           </div>
-          <div id="map"></div>
+          <button class="btn btn-warning" onclick="getLocation()">Ambil lokasi otomatis <i class="fa-solid fa-map-pin"></i> </button>
+          <div id="demo"></div>
           <div class="form-group">
             <label for="latitude">Latitude</label>
             <input type="text" name="latitude" id="latitude" class="form-control">
@@ -498,9 +499,9 @@ const deleteKecelakaan = $("#deleteKecelakaanForm").attr('action');
   };
 </script>
 <script>
-    CKEDITOR.replaceAll('my-editor');
-    CKEDITOR.replaceAll('my-editor-edit');
-    CKEDITOR.replaceAll('my-editor-detail');
+  CKEDITOR.replace('my-editor', options);
+  CKEDITOR.replace('my-editor-edit', options);
+  CKEDITOR.replace('my-editor-detail', options);
 </script>
 
 <script>
@@ -573,8 +574,21 @@ const deleteKecelakaan = $("#deleteKecelakaanForm").attr('action');
   //     L.marker(res.latlng).addTo(mapEdit).bindPopup(res.address.Match_addr).openPopup();
   //   });
   // });
-
-  
-  
 </script>
+<script>
+  var x = document.getElementById("demo");
+  
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+      x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+  }
+  
+  function showPosition(position) {
+    $('#latitude').val(position.coords.latitude)
+    $('#longitude').val(position.coords.longitude)
+  }
+  </script>
 @endsection

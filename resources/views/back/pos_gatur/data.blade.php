@@ -80,9 +80,8 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Nama</th>
-                    <th>Latitude</th>
-                    <th>Longitude</th>
+                    <th>Pos Gatur</th>
+                    <th>Pos</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -94,8 +93,7 @@
                 <tr>
                     <td>{{ $increment++ }}</td>
                     <td>{{ $posdata->nama }}</td>
-                    <td>{{ $posdata->latitude }}</td>
-                    <td>{{ $posdata->longitude }}</td>
+                    <td>{{ $posdata->pos->nama }}</td>
                     <td>
                         <button class="btn btn-sm btn-warning" data-toggle="modal"
                             data-target="#editPosGatur{{$posdata->id}}" onclick="validateFormEdit({{ $posdata }})"
@@ -131,12 +129,23 @@
             <input type="text" class="form-control" name="nama" placeholder="Nama Pos Gatur">
           </div>
           <div class="form-group">
+            <label for="">Pos</label>
+            <select name="pos_id" class="form-control" id="">
+              @foreach ($pos as $item)
+                  <option value="{{$item->id}}">{{$item->nama}}</option>
+              @endforeach
+            </select>
+          </div>
+          <button class="btn btn-warning" onclick="getLocation()">Ambil lokasi otomatis <i class="fa-solid fa-map-pin"></i> </button>
+          <div id="demo"></div>
+          <br>
+          <div class="form-group">
             <label for="latitude">Latitude</label>
-            <input type="text" class="form-control" name="latitude" placeholder="Latitude">
+            <input type="text" class="form-control"id="latitude" name="latitude" placeholder="Latitude">
           </div>
           <div class="form-group">
             <label for="longitude">Longitude</label>
-            <input type="text" class="form-control" name="longitude" placeholder="Longitude">
+            <input type="text" class="form-control"id="longitude" name="longitude" placeholder="Longitude">
           </div>
         </div>
         <div class="modal-footer bg-whitesmoke br">
@@ -363,4 +372,20 @@ const deletePos = $("#deletePosGaturForm").attr('action');
   
   $("#deleteAllButton").attr('disabled', true); 
 </script>
+<script>
+  var x = document.getElementById("demo");
+  
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+      x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+  }
+  
+  function showPosition(position) {
+    $('#latitude').val(position.coords.latitude)
+    $('#longitude').val(position.coords.longitude)
+  }
+  </script>
 @endsection

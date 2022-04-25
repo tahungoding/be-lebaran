@@ -1,17 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Back;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Web;
-use App\Models\Pos;
 use App\Models\PosGatur;
-use App\Models\Kemacetan;
-use App\Models\Kecelakaan;
-use Illuminate\Support\Facades\Auth;
 
-class DashboardController extends Controller
+class PosGaturController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,16 +15,8 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $data['web'] = Web::all();
-        $data['pos'] = Pos::count();
-        $data['pos_gatur'] = PosGatur::count();
-        $data['kemacetan'] = Kemacetan::when(Auth::user()->role == 'pos', function ($query) {
-            $query->where('pos_id', Auth::user()->pos_id);
-        })->count();
-        $data['kecelakaan'] = Kecelakaan::when(Auth::user()->role == 'pos', function ($query) {
-            $query->where('pos_id', Auth::user()->pos_id);
-        })->count();
-        return view('back.dashboard.index', $data);
+        $data = PosGatur::all();
+        return response()->json($data, 200);
     }
 
     /**

@@ -67,8 +67,11 @@ class PosController extends Controller
     {        
         $data = [
             'nama' => $request->nama,
+            'alamat' => $request->alamat,
             'jenis_pos' => $request->jenis_pos,
             'district_id' => $request->district_id,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude
         ];
 
         Pos::create($data)
@@ -113,8 +116,11 @@ class PosController extends Controller
         
         $data = [
             'nama' => $request->edit_nama ? $request->edit_nama : $pos->nama,
+            'alamat' => $request->edit_alamat ? $request->edit_alamat : $pos->alamat,
             'jenis_pos' => $request->edit_jenis_pos ? $request->edit_jenis_pos : $pos->jenis_pos,
             'district_id' => $request->edit_district_id ? $request->edit_district_id : $pos->district_id,           
+            'latitude' => $request->edit_latitude ? $request->edit_latitude : $pos->latitude,
+            'longitude' => $request->edit_longitude ? $request->edit_longitude : $pos->longitude,
         ];
 
         $pos->update($data)

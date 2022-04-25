@@ -11,7 +11,5 @@ class Kecelakaan extends Model
 
     protected $table = "kecelakaan";
 
-    protected $fillable = [
-        'lokasi', 'ringkas_kejadian', 'detail_kejadian', 'file_pendukung', 'waktu', 'latitude', 'longitude'
-    ];
+    protected $guarded = ['id'];
 }
