@@ -233,11 +233,11 @@
               <div id="map-edit"></div>
               <div class="form-group">
                 <label for="latitude">Latitude</label>
-                <input type="text" name="edit_latitude" class="form-control" value="{{ $kemacetanData->latitude }}" readonly>
+                <input type="text" name="edit_latitude" id="edit_latitude" class="form-control" value="{{ $kemacetanData->latitude }}" readonly>
               </div>
               <div class="form-group">
                 <label for="longitude">Longitude</label>
-                <input type="text" name="edit_longitude" class="form-control" value="{{ $kemacetanData->longitude }}" readonly>
+                <input type="text" name="edit_longitude" id="edit_longitude" class="form-control" value="{{ $kemacetanData->longitude }}" readonly>
               </div>
         </div>
         <div class="modal-footer bg-whitesmoke br">
@@ -496,9 +496,9 @@ const deleteKemacetan = $("#deleteKemacetanForm").attr('action');
   };
 </script>
 <script>
-    CKEDITOR.replaceAll('my-editor');
-    CKEDITOR.replaceAll('my-editor-edit');
-    CKEDITOR.replaceAll('my-editor-detail');
+    CKEDITOR.replaceAll('my-editor', options);
+    CKEDITOR.replaceAll('my-editor-edit', options);
+    CKEDITOR.replaceAll('my-editor-detail', options);
 </script>
 
 <script>
@@ -547,8 +547,8 @@ const deleteKemacetan = $("#deleteKemacetanForm").attr('action');
   mapEdit.on('click', (e)=>{
     gcs.reverse().latlng(e.latlng).run((err, res)=>{
       if(err) return;
-      document.getElementById('latitude').value = e.latlng.lat
-      document.getElementById('longitude').value = e.latlng.lng
+      document.getElementById('edit_latitude').value = e.latlng.lat
+      document.getElementById('edit_longitude').value = e.latlng.lng
       L.marker(res.latlng).addTo(mapEdit).bindPopup(res.address.Match_addr).openPopup();
     });
   });
