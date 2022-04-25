@@ -15,7 +15,7 @@ class KemacetanController extends Controller
      */
     public function index()
     {
-        $data = Kemacetan::paginate(10);
+        $data = Kemacetan::with(['pos','pos_gatur'])->paginate(10);
 
         return response()->json($data, 200);
     }

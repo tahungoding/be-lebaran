@@ -15,7 +15,7 @@ class PosGaturController extends Controller
      */
     public function index()
     {
-        $data = PosGatur::all();
+        $data = PosGatur::with('pos')->get();
         return response()->json($data, 200);
     }
 

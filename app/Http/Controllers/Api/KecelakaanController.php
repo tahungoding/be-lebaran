@@ -15,7 +15,7 @@ class KecelakaanController extends Controller
      */
     public function index()
     {
-        $data = Kecelakaan::paginate(10);
+        $data = Kecelakaan::with(['pos','pos_gatur'])->paginate(10);
 
         return response()->json($data, 200);
     }
