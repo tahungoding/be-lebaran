@@ -61,7 +61,9 @@
 
             <div class="card" style="border-top: 2px solid {{ $primary_color }}; border-radius: 15px;">
               <div class="card-header">
-                <h4>Login</h4>
+                @foreach($web as $webs)
+                <h4>Login - {{ $webs->name }}</h4>
+                @endforeach
               </div>
 
               <div class="card-body">

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Web;
 use Storage;
 use Alert;
+use Auth;
 
 class ProfileWebController extends Controller
 {
