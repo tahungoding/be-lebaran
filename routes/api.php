@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\KemacetanController;
+use App\Http\Controllers\Api\KecelakaanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +22,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('kemacetan', [KemacetanController::class, 'index']);
 Route::get('kemacetan/detail/{id}', [KemacetanController::class, 'show']);
+
+Route::get('kecelakaan', [KecelakaanController::class, 'index']);
+Route::get('kecelakaan/detail/{id}', [KecelakaanController::class, 'show']);
