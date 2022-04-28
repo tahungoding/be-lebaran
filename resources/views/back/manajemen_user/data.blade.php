@@ -430,8 +430,7 @@
         });
     </script>
     <script>
-var lightbox = new SimpleLightbox('.gallery a', { /* options */ });
-
+        var lightbox = new SimpleLightbox('.gallery a', { /* options */ });
     </script>
     <script>
         $('.dropify').dropify();

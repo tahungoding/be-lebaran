@@ -108,7 +108,7 @@
         <div class="section-body">
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route('kemacetan.store') }}" method="post" id="tambahKemacetanForm">
+                    <form action="{{ route('kemacetan.store') }}" method="post" id="tambahKemacetanForm" enctype="multipart/form-data">
                         @csrf
                     <div class="row">
                         <div class="form-group col-md-6 col-12">
@@ -129,7 +129,11 @@
                             <label>Detail Kejadian</label>
                             <textarea name="detail_kejadian" class="form-control my-editor" id="my-editor" style="height: 30vh;"></textarea>
                         </div>
-
+                        <div class="form-group col-md-12 col-12">
+                            <label>Upload Gambar (optional)</label>
+                            <input type="file" class="form-control dropify" name="file_pendukung" id="file_pendukung"
+                                data-allowed-file-extensions="png jpg jpeg" data-show-remove="false">
+                        </div>
                         <div class="form-group col-md-12 col-12">
                             <label>Map</label>
                             <div id="map"></div>
@@ -165,17 +169,8 @@
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap.min.js"></script>
 
-    <script src="//cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
     <script>
-      var options = {
-        filebrowserImageBrowseUrl: '/laravel-filemanager?type=Images',
-        filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token=',
-        filebrowserBrowseUrl: '/laravel-filemanager?type=Files',
-        filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token='
-      };
-    </script>
-    <script>
-        CKEDITOR.replace('my-editor', options);
+        $('.dropify').dropify();
     </script>
 <script>
     $(document).ready(function() {

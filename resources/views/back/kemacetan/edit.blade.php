@@ -108,7 +108,7 @@
         <div class="section-body">
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route('kemacetan.update', $kemacetan->id) }}" method="post" id="editKemacetanForm">
+                    <form action="{{ route('kemacetan.update', $kemacetan->id) }}" method="post" id="editKemacetanForm" enctype="multipart/form-data">
                         @csrf
                         @method('put')
                     <div class="row">
@@ -130,14 +130,18 @@
                             <label>Detail Kejadian</label>
                             <textarea name="edit_detail_kejadian" class="form-control my-editor" id="my-editor" style="height: 30vh;">{{ $kemacetan->detail_kejadian }}</textarea>
                         </div>
-
+                        <div class="form-group col-md-12 col-12">
+                            <label>Upload Gambar (optional)</label>
+                            <input type="file" class="form-control dropify" name="edit_file_pendukung" id="edit_file_pendukung"
+                                data-allowed-file-extensions="png jpg jpeg" data-show-remove="false" data-default-file="{{ asset('images/kemacetan/'. $kemacetan->file_pendukung) }}">
+                        </div>
                         <div class="form-group col-md-12 col-12">
                             <label>Map</label>
                             <div id="map"></div>
                         </div>
                         <div class="form-group col-md-6 col-12">
                             <label>Latitiude</label>
-                            <input type="text" name="edit_latitude" id="ppp" class="form-control" value="{{ $kemacetan->latitude }}">
+                            <input type="text" name="edit_latitude" id="latitude" class="form-control" value="{{ $kemacetan->latitude }}">
                         </div>
                         <div class="form-group col-md-6 col-12">
                             <label>Longitude</label>
@@ -166,19 +170,9 @@
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap.min.js"></script>
 
-    <script src="//cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
-    <script>
-      var options = {
-        filebrowserImageBrowseUrl: '/laravel-filemanager?type=Images',
-        filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token=',
-        filebrowserBrowseUrl: '/laravel-filemanager?type=Files',
-        filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token='
-      };
-    </script>
-    <script>
-        CKEDITOR.replace('my-editor', options);
-    </script>
-
+<script>
+    $('.dropify').dropify();
+</script>
 <script>
     $(document).ready(function() {
 

@@ -8,6 +8,8 @@ use App\Models\Kemacetan;
 use App\Models\Web;
 use Alert;
 use Storage;
+use File;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class KemacetanController extends Controller
@@ -72,14 +74,27 @@ class KemacetanController extends Controller
      */
     public function store(Request $request)
     {       
-        $file_pendukung = ($request->file_pendukung) ? $request->file('file_pendukung')->store("/public/input/kemacetan") : null;
+        if ($request->hasFile('file_pendukung')) {
+            $file = $request->file('file_pendukung');
 
+            $file_pendukung = time() . "_" . $file->getClientOriginalName();
+
+            $tujuan_upload = public_path('images/kecamatan');
+
+            $file->move($tujuan_upload, $file_pendukung);
+
+        } else {
+            $file_pendukung = null;
+        }
+        
+        $date = Carbon::now();
         $data = [
             'lokasi' => $request->lokasi,
             'ringkas_kejadian' => $request->ringkas_kejadian,
             'detail_kejadian' => $request->detail_kejadian,
             'file_pendukung' => $file_pendukung,
             'waktu' => $request->waktu,
+            'tanggal' => $date->toFormattedDateString(),
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'user_id' => Auth::user()->id
@@ -134,20 +149,30 @@ class KemacetanController extends Controller
     public function update(Request $request, $id)
     {
         $kemacetan = Kemacetan::findOrFail($id);
-        if($request->hasFile('edit_file_pendukung')) {
-            if(Storage::exists($kemacetan->file_pendukung) && !empty($kemacetan->file_pendukung)) {
-                Storage::delete($kemacetan->file_pendukung);
+
+        if ($request->hasFile('edit_file_pendukung')) {
+
+            $StoredImage = public_path("images/kemacetan/{$kemacetan->file_pendukung}");
+            if (File::exists($StoredImage) && !empty($kemacetan->file_pendukung)) {
+                unlink($StoredImage);
             }
 
-            $edit_file_pendukung = $request->file("edit_file_pendukung")->store("/public/input/kecamatan");
+            $file = $request->file('edit_file_pendukung');
+
+            $edit_file_pendukung = time() . "_" . $file->getClientOriginalName();
+
+            $tujuan_upload = public_path('images/kemacetan');
+
+            $file->move($tujuan_upload, $edit_file_pendukung);
         }
-        
+
         $data = [
             'lokasi' => $request->edit_lokasi ? $request->edit_lokasi : $kemacetan->lokasi,
             'ringkas_kejadian' => $request->edit_ringkas_kejadian ? $request->edit_ringkas_kejadian : $kemacetan->ringkas_kejadian,
             'detail_kejadian' => $request->edit_detail_kejadian ? $request->edit_detail_kejadian : $kemacetan->detail_kejadian,
-            'file_pendukung' => $request->hasFile('edit_file_pendukung') ? $edit_file_pendukung : $kemacetan->file_pendukung,          
+            'file_pendukung' => $request->hasFile('edit_file_pendukung') ? $edit_file_pendukung : $p->file_pendukung,          
             'waktu' => $request->edit_waktu ? $request->edit_waktu : $kemacetan->waktu,
+            'tanggal' => $kemacetan->tanggal,
             'latitude' => $request->edit_latitude ? $request->edit_latitude : $kemacetan->latitude,
             'longitude' => $request->edit_longitude ? $request->edit_longitude : $kemacetan->longitude,
         ];

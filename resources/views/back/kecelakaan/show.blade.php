@@ -30,6 +30,8 @@
     <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.9/dist/esri-leaflet-geocoder.js"
         integrity="sha512-QXchymy6PyEfYFQeOUuoz5pH5q9ng0eewZN8Sv0wvxq3ZhujTGF4eS/ySpnl6YfTQRWmA2Nn3Bezi9xuF8yNiw=="
         crossorigin=""></script>
+    
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.10.3/simple-lightbox.min.css" integrity="sha512-Ne9/ZPNVK3w3pBBX6xE86bNG295dJl4CHttrCp3WmxO+8NQ2Vn8FltNr6UsysA1vm7NE6hfCszbXe3D6FUNFsA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
         .dropify-wrapper {
@@ -127,7 +129,14 @@
                             <label>Detail Kejadian</label>
                             <textarea name="edit_detail_kejadian" class="form-control my-editor" id="my-editor" style="height: 30vh;" readonly>{{ $kecelakaan->detail_kejadian }}</textarea>
                         </div>
-
+                        <div class="form-group col-md-12 col-12">
+                            <label>Upload Gambar (optional)</label>
+                            <div class="gallery" style="overflow: hidden;">
+                                @if(!empty($kecelakaan->file_pendukung) && file_exists(public_path('images/kecelakaan/'. $kecelakaan->file_pendukung)))
+                                <a href="{{ asset('images/kecelakaan/'. $kecelakaan->file_pendukung) }}"><img src="{{ asset('images/kecelakaan/'. $kecelakaan->file_pendukung) }}" style="width: 150px; height: 150px; object-fit: cover;"/></a>
+                                @endif
+                            </div>
+                        </div>
                         <div class="form-group col-md-12 col-12">
                             <label>Map</label>
                             <div id="map"></div>
@@ -159,20 +168,18 @@
     <script src="https://cdn.datatables.net/fixedheader/3.1.9/js/dataTables.fixedHeader.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.10.3/simple-lightbox.min.js" integrity="sha512-XGiM73niqHXRwBELBEktUKuGXC9yHyaxEsVWvUiCph8yxkaNkGeXJnqs5Ls1RSp4Q+PITMcCy2Dw7HxkzBWQCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <script src="//cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
+    
     <script>
-      var options = {
-        filebrowserImageBrowseUrl: '/laravel-filemanager?type=Images',
-        filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token=',
-        filebrowserBrowseUrl: '/laravel-filemanager?type=Files',
-        filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token='
-      };
+        $('.dropify').dropify();
     </script>
     <script>
         CKEDITOR.replace('my-editor', options);
     </script>
-
+<script>
+    var lightbox = new SimpleLightbox('.gallery a', { /* options */ });
+</script>
   
     <script type="text/javascript">
         // Initialize the map and assign it to a variable for later use
