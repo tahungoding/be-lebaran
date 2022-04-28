@@ -5,7 +5,13 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css"
     integrity="sha512-EZSUkJWTjzDlspOoPSpUFR0o0Xy7jdzW//6qhUkoZ9c4StFkVsp9fbbd0O06p9ELS3H486m4wmrCELjza4JEog=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ asset('cropper-js/css/cropper.css')}}">
+
 <style>
+    .cropper-view-box,
+    .cropper-face {
+      border-radius: 50%;
+    }
     .dropify-wrapper {
         border: 1px solid #e2e7f1;
         border-radius: .3rem;
@@ -46,8 +52,8 @@
     <div class="section-header">
         <h1>Profile</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item active"><a href="{{ route('dashboard.index')}}">Dashboard</a></div>
-            <div class="breadcrumb-item">Profile</div>
+            <div class="breadcrumb-item">Dashboard</div>
+            <div class="breadcrumb-item active"><a href="{{ url()->current() }}">Profile</a></div>
         </div>
     </div>
     <div class="section-body">
@@ -92,23 +98,6 @@
                                     </div>
                                     <div id="errorPassword"></div>
                                 </div>
-
-                                <div class="form-group col-md-6 col-12">
-                                    <label>Nomor Telepon</label>
-                                    <input type="tel" class="form-control" name="phone" value="{{ Auth::user()->phone }}">
-                                </div>
-                                <div class="form-group col-md-6 col-12">
-                                    <label>Tempat Lahir</label>
-                                    <input type="text" class="form-control" name="place_of_birth" value="{{ Auth::user()->place_of_birth }}">
-                                </div>
-                                <div class="form-group col-md-6 col-12">
-                                    <label>Tanggal Lahir</label>
-                                    <input type="date" class="form-control" name="date_of_birth" value="{{ Auth::user()->date_of_birth }}">
-                                </div>
-                                <div class="form-group col-md-6 col-12">
-                                    <label>Alamat</label>
-                                    <textarea name="address" class="form-control" style="height: 100%;">{{ Auth::user()->address }}</textarea>
-                                </div>
                                 <div class="form-group col-md-6 col-12">
                                     <label>Foto</label>
                                     <input type="file" class="form-control dropify" name="photo"
@@ -134,6 +123,61 @@
 <script>
     $('.dropify').dropify();
 </script>
+<script src="{{ asset('cropper-js/js/cropper.js')}}"></script>
+  <script>
+    function getRoundedCanvas(sourceCanvas) {
+      var canvas = document.createElement('canvas');
+      var context = canvas.getContext('2d');
+      var width = sourceCanvas.width;
+      var height = sourceCanvas.height;
+
+      canvas.width = width;
+      canvas.height = height;
+      context.imageSmoothingEnabled = true;
+      context.drawImage(sourceCanvas, 0, 0, width, height);
+      context.globalCompositeOperation = 'destination-in';
+      context.beginPath();
+      context.arc(width / 2, height / 2, Math.min(width, height) / 2, 0, 2 * Math.PI, true);
+      context.fill();
+      return canvas;
+    }
+
+    window.addEventListener('DOMContentLoaded', function () {
+      var image = document.getElementById('image');
+      var button = document.getElementById('button');
+      var result = document.getElementById('result');
+      var croppable = false;
+      var cropper = new Cropper(image, {
+        aspectRatio: 1,
+        viewMode: 1,
+        ready: function () {
+          croppable = true;
+        },
+      });
+
+      button.onclick = function () {
+        var croppedCanvas;
+        var roundedCanvas;
+        var roundedImage;
+
+        if (!croppable) {
+          return;
+        }
+
+        // Crop
+        croppedCanvas = cropper.getCroppedCanvas();
+
+        // Round
+        roundedCanvas = getRoundedCanvas(croppedCanvas);
+
+        // Show
+        roundedImage = document.createElement('img');
+        roundedImage.src = roundedCanvas.toDataURL()
+        result.innerHTML = '';
+        result.appendChild(roundedImage);
+      };
+    });
+  </script>
 <script>
     $.ajaxSetup({
         headers: {

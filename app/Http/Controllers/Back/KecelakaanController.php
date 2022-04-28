@@ -55,7 +55,8 @@ class KecelakaanController extends Controller
 
     public function create()
     {
-        //
+        $data['web'] = Web::all();
+        return view('back.kecelakaan.create', $data);
     }
 
     /**
@@ -87,7 +88,7 @@ class KecelakaanController extends Controller
         ? Alert::success('Berhasil', 'Data Kecelakaan telah berhasil ditambahkan!')
         : Alert::error('Error', 'Data Kecelakaan gagal ditambahkan!');
 
-        return redirect()->back();
+        return redirect()->route('kecelakaan.index');
     }
 
     /**
@@ -98,7 +99,10 @@ class KecelakaanController extends Controller
      */
     public function show($id)
     {
-        //
+        $data['kecelakaan'] = Kecelakaan::find($id);
+        $data['web'] = Web::all();
+
+        return view('back.kecelakaan.show', $data);
     }
 
     /**
@@ -109,7 +113,10 @@ class KecelakaanController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data['kecelakaan'] = Kecelakaan::find($id);
+        $data['web'] = Web::all();
+
+        return view('back.kecelakaan.edit', $data);
     }
 
     /**

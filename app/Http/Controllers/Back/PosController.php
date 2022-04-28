@@ -54,7 +54,9 @@ class PosController extends Controller
 
     public function create()
     {
-        //
+        $data['web'] = Web::all();
+        $data['districts'] = District::where('regency_id', '=', '3211')->get();
+        return view('back.pos.create', $data);
     }
 
     /**
@@ -100,7 +102,11 @@ class PosController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data['pos'] = Pos::find($id);
+        $data['districts'] = District::where('regency_id', '=', '3211')->get();
+        $data['web'] = Web::all();
+
+        return view('back.pos.edit', $data);
     }
 
     /**

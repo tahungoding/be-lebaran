@@ -12,8 +12,5 @@ class Pos extends Model
     protected $table = "pos";
     protected $guarded = ['id'];
 
-    public function medicineType() 
-    {
-      return $this->belongsTo(District::class, 'id');
-   }
+    
 }

@@ -66,8 +66,8 @@
         <div class="card">
           <div class="card-header">
             <div class="d-flex justify-content-between w-100">
-              <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#tambahPos"><i
-                  class="fas fa-plus-circle"></i></button>
+              <a href="{{ route('pos.create') }}" class="btn btn-sm btn-primary"><i
+                class="fas fa-plus-circle"></i></a>
             </div>
           </div>
         </div>
@@ -108,8 +108,8 @@
                      {{ $kecamatan->name }}
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-warning" data-toggle="modal"
-                            data-target="#editPos{{$posdata->id}}" onclick="validateFormEdit({{ $posdata }})"><i class="fa fa-edit"></i></button>
+                      <a href="{{ route('pos.edit', $posdata->id) }}"
+                        class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
                         <button type="button" data-toggle="modal" data-target="#deleteConfirm"
                             class="btn btn-sm btn-danger" onclick="deleteThisPos({{ $posdata }})"><i
                                 class="fa fa-trash"></i>

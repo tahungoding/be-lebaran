@@ -55,6 +55,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
     // Route::post('testimony/pagination', [TestimonyController::class, 'testimonyPagination'])->name('testimonyPagination');
 
     Route::resource('kemacetan', KemacetanController::class);
+
+    Route::get('map', [KemacetanController::class,'map']);
     // Route::post('teams/destroy-all', [TeamController::class, 'destroyAll'])->name('teams.destroyAll');
 
     Route::resource('kecelakaan', KecelakaanController::class);

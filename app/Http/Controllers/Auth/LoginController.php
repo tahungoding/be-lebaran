@@ -75,12 +75,7 @@ class LoginController extends Controller
             'username' => $request->username ? $request->username : $user->username,
             'email' => $request->email ? $request->email : $user->email,
             'password' => $request->password ? Hash::make($request->password) : $user->password,
-            'address' => $request->address ? $request->address : $user->address,
-            'phone' => $request->phone ? $request->phone : $user->phone,
-            'gender' => $request->gender ? $request->gender : $user->gender,
             'photo' => $request->hasFile('photo') ? $photo : $user->photo,
-            'place_of_birth' => $request->place_of_birth ? $request->place_of_birth : $user->place_of_birth,
-            'date_of_birth' => $request->date_of_birth ? $request->date_of_birth : $user->date_of_birth
         ];
 
         $user->update($data)
