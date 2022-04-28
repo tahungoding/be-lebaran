@@ -170,7 +170,7 @@ class KemacetanController extends Controller
             'lokasi' => $request->edit_lokasi ? $request->edit_lokasi : $kemacetan->lokasi,
             'ringkas_kejadian' => $request->edit_ringkas_kejadian ? $request->edit_ringkas_kejadian : $kemacetan->ringkas_kejadian,
             'detail_kejadian' => $request->edit_detail_kejadian ? $request->edit_detail_kejadian : $kemacetan->detail_kejadian,
-            'file_pendukung' => $request->hasFile('edit_file_pendukung') ? $edit_file_pendukung : $p->file_pendukung,          
+            'file_pendukung' => $request->hasFile('edit_file_pendukung') ? $edit_file_pendukung : $kemacetan->file_pendukung,          
             'waktu' => $request->edit_waktu ? $request->edit_waktu : $kemacetan->waktu,
             'tanggal' => $kemacetan->tanggal,
             'latitude' => $request->edit_latitude ? $request->edit_latitude : $kemacetan->latitude,
