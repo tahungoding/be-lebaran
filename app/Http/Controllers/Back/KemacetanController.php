@@ -32,6 +32,11 @@ class KemacetanController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    public function map() {
+        $data['web'] = Web::all();
+        return view('map.data', $data);
+    }
+
     // public function checkKemacetanName(Request $request) 
     // {
     //     if($request->Input('kecamatan_name')){
@@ -55,7 +60,8 @@ class KemacetanController extends Controller
 
     public function create()
     {
-        //
+        $data['web'] = Web::all();
+        return view('back.kemacetan.create', $data);
     }
 
     /**
@@ -87,7 +93,7 @@ class KemacetanController extends Controller
         ? Alert::success('Berhasil', 'Data Kemacetan telah berhasil ditambahkan!')
         : Alert::error('Error', 'Data Kemacetan gagal ditambahkan!');
 
-        return redirect()->back();
+        return redirect()->route('kemacetan.index');
     }
 
     /**
@@ -98,7 +104,10 @@ class KemacetanController extends Controller
      */
     public function show($id)
     {
-        //
+        $data['kemacetan'] = Kemacetan::find($id);
+        $data['web'] = Web::all();
+
+        return view('back.kemacetan.show', $data);
     }
 
     /**
@@ -109,7 +118,10 @@ class KemacetanController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data['kemacetan'] = Kemacetan::find($id);
+        $data['web'] = Web::all();
+
+        return view('back.kemacetan.edit', $data);
     }
 
     /**

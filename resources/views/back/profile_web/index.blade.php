@@ -49,8 +49,9 @@
   <div class="section-header">
     <h1>Profile Web</h1>
     <div class="section-header-breadcrumb">
-      <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-      <div class="breadcrumb-item">Profile Web</div>
+      <div class="breadcrumb-item">Dashboard</div>
+      <div class="breadcrumb-item active"><a href="{{ url()->current() }}">Profile Web</a></div>
+
     </div>
   </div>
 

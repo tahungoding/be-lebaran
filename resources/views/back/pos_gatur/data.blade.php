@@ -66,8 +66,8 @@
         <div class="card">
           <div class="card-header">
             <div class="d-flex justify-content-between w-100">
-              <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#tambahPosGatur"><i
-                  class="fas fa-plus-circle"></i></button>
+              <a href="{{ route('pos-gatur.create') }}" class="btn btn-sm btn-primary"><i
+                  class="fas fa-plus-circle"></i></a>
             </div>
           </div>
         </div>
@@ -95,9 +95,8 @@
                     <td>{{ $posdata->nama }}</td>
                     <td>{{ $posdata->pos->nama }}</td>
                     <td>
-                        <button class="btn btn-sm btn-warning" data-toggle="modal"
-                            data-target="#editPosGatur{{$posdata->id}}" onclick="validateFormEdit({{ $posdata }})"
-                            ><i class="fa fa-edit"></i></button>
+                      <a href="{{ route('pos-gatur.edit', $posdata->id) }}"
+                        class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
                         <button type="button" data-toggle="modal" data-target="#deleteConfirm"
                             class="btn btn-sm btn-danger" onclick="deleteThisPosGatur({{ $posdata }})"><i
                                 class="fa fa-trash"></i>
@@ -112,92 +111,6 @@
   </div>
 </section>
 
-<div class="modal fade" tabindex="-1" role="dialog" id="tambahPosGatur">
-  <div class="modal-dialog " role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Tambah Pos Gatur</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form action="{{ route('pos-gatur.store') }}" method="post" id="tambahPosGaturForm" enctype="multipart/form-data">
-        @csrf
-        <div class="modal-body">
-          <div class="form-group">
-            <label for="nama">Nama</label>
-            <input type="text" class="form-control" name="nama" placeholder="Nama Pos Gatur">
-          </div>
-          <div class="form-group">
-            <label for="">Pos</label>
-            <select name="pos_id" class="form-control" id="">
-              @foreach ($pos as $item)
-                  <option value="{{$item->id}}">{{$item->nama}}</option>
-              @endforeach
-            </select>
-          </div>
-          <button class="btn btn-warning" onclick="getLocation()">Ambil lokasi otomatis <i class="fa-solid fa-map-pin"></i> </button>
-          <div id="demo"></div>
-          <br>
-          <div class="form-group">
-            <label for="latitude">Latitude</label>
-            <input type="text" class="form-control"id="latitude" name="latitude" placeholder="Latitude">
-          </div>
-          <div class="form-group">
-            <label for="longitude">Longitude</label>
-            <input type="text" class="form-control"id="longitude" name="longitude" placeholder="Longitude">
-          </div>
-        </div>
-        <div class="modal-footer bg-whitesmoke br">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
-          <button type="submit" class="btn btn-primary" id="tambahButton">Tambah</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-@foreach ($pos_gatur as $Allpos)
-<div class="modal fade" tabindex="-1" role="dialog" id="editPosGatur{{$Allpos->id}}">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Edit Pos Gatur</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form action="{{ route('pos-gatur.update', $Allpos->id) }}" method="post" id="editPosGaturForm{{$Allpos->id}}"
-        enctype="multipart/form-data">
-        @csrf
-        @method('PUT')
-        <input type="hidden" id="checkPosGaturName" value="{{ $Allpos->nama }}">
-        <div class="modal-body">
-          <div class="form-group">
-            <label for="edit_nama">Nama</label>
-            <input type="text" class="form-control" name="edit_nama" id="editName" placeholder="Nama Pos Gatur"
-              value="{{ $Allpos->nama }}">
-          </div>
-          <div class="form-group">
-            <label for="edit_latitude">Latitude</label>
-            <input type="text" class="form-control" name="edit_latitude" placeholder="Latitude"
-              value="{{ $Allpos->latitude }}">
-          </div>
-          <div class="form-group">
-            <label for="edit_longitude">Longitude</label>
-            <input type="text" class="form-control" name="edit_longitude" placeholder="Longitude"
-            value="{{ $Allpos->longitude }}">
-          </div>
-        </div>
-        <div class="modal-footer bg-whitesmoke br">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
-          <button type="submit" class="btn btn-primary" id="editPosButton">Ubah</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-@endforeach
 
 <div class="modal fade" tabindex="-1" role="dialog" id="deleteConfirm">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -262,7 +175,37 @@
 <script>
   $('.dropify').dropify();
 </script>
+<script>
+  
+</script>
+<script>
+        const updateLink = $('#editPosGaturForm').attr('action');
+        const idForm = $('#editPosGaturForm').attr('id');
 
+        const checkPosGaturNameId = $('#checkPosGaturName').attr('id');
+
+        function setEditData(data) {
+            var posData = {!! json_encode($pos) !!};
+            console.log(posData);
+            $("#editPos").html('');
+            for (let [key, value] of Object.entries(posData)) {
+              $("#editPos").append(`<option value="${value.id}" ${value.id} == ${data.pos_id} ? 'checked' : ''>${value.nama}</option>`);
+            }
+            // make form id unique for jquery validaiton
+            $('#editPosGaturForm').attr('id', `${idForm}${data.id}`);
+            $('#editPosGaturForm' + data.id).attr('action', `${updateLink}/${data.id}`);
+
+            // make checkPosgaturNmae unique
+            $('#checkPosGaturName').attr('id', `${checkPosGaturNameId}${data.id}`);
+            $('#checkPosGaturName' + data.id).val(data.nama);
+
+            $('[name="edit_nama"]').val(data.nama);
+            $('[name="edit_pos_id"]').val(data.pos_id);
+            $('[name="edit_latitude"]').val(data.latitude);
+            $('[name="edit_longitude"]').val(data.longitude);
+            editPosGaturValidate(data);
+        }
+</script>
 <script>
   $(document).ready(function() {
 
@@ -311,7 +254,7 @@
   });
 });
 
-function validateFormEdit(data) {
+function editPosGaturValidate(data) {
   $("#editPosGaturForm" + data.id).validate({
       rules: {
         edit_nama:{
@@ -323,7 +266,7 @@ function validateFormEdit(data) {
                         },
                         depends: function(element) {
                           // compare name in form to hidden field
-                          return ($(element).val() !== $('#checkPosGaturName').val());
+                          return ($(element).val() !== $('#checkPosGaturName' + data.id).val());
                         },
                       }
           },
@@ -387,5 +330,24 @@ const deletePos = $("#deletePosGaturForm").attr('action');
     $('#latitude').val(position.coords.latitude)
     $('#longitude').val(position.coords.longitude)
   }
+
+  // Edit
+
+    var xedit = document.getElementById("editDemo");
+
+    function getEditLocation() {
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showEditPosition);
+      } else { 
+        xedit.innerHTML = "Geolocation is not supported by this browser.";
+      }
+    }
+    
+    function showEditPosition(position) {
+      $('#editLatitude').val(position.coords.latitude)
+      $('#editLongitude').val(position.coords.longitude)
+    }
+
   </script>
 @endsection

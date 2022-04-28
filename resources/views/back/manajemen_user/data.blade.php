@@ -8,8 +8,7 @@
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap4.min.css">
-
-  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.10.3/simple-lightbox.min.css" integrity="sha512-Ne9/ZPNVK3w3pBBX6xE86bNG295dJl4CHttrCp3WmxO+8NQ2Vn8FltNr6UsysA1vm7NE6hfCszbXe3D6FUNFsA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
         .dropify-wrapper {
@@ -55,6 +54,20 @@
             }
         }
 
+        .gallery a {
+            cursor: pointer;
+        }
+        .gallery a img {
+            border-radius: 150%;
+            width: 30px;
+            height: 30px;
+        }
+
+        .gallery {
+            display: inline-block;
+            padding: 5px;
+        }
+
     </style>
 @endsection
 @section('container')
@@ -83,6 +96,7 @@
             </div>
             <div class="card">
                 <div class="card-body">
+                    
                     <table id="user_table" class="table table-striped table-bordered dt-responsive nowrap"
                         style="width:100%">
                         <thead>
@@ -91,6 +105,7 @@
                                 <th>Nama Lengkap</th>
                                 <th>Username</th>
                                 <th>Email</th>
+                                <th>Photo</th>
                                 <th>Role</th>
                                 <th>Aksi</th>
                             </tr>
@@ -111,6 +126,15 @@
                                     <td>{{ $data->username }}</td>
                                     <td>{{ $data->email }}</td>
                                     <td>
+                                        <div class="gallery" style="overflow: hidden;">
+                                            @if(Storage::exists($data->photo) && !empty($data->photo))
+                                            <a href="{{ Storage::url($data->photo) }}"><img src="{{ Storage::url($data->photo) }}" style="width: 60px; height: 60px; object-fit: cover;"/></a>
+                                            @else
+                                            <a href="{{ asset('assets/img/avatar/avatar-1.png') }}" style="width: 60px; height: 60px; object-fit: cover;"><img src="{{ asset('assets/img/avatar/avatar-1.png') }}" style="width: 60px; height: 60px; object-fit: cover;"/></a>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td>
                                         @php
                                             $color = 'secondary';
                                             if ($data->role == 'super_admin') {
@@ -125,8 +149,8 @@
                                             class="badge badge-{{ $color }} font-15">{{ ucwords(str_replace('_', ' ', $data->role)) }}</span>
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-warning" data-toggle="modal"
-                                            data-target="#editUser{{ $data->id }}" onclick="validateFormEdit({{ $data }})"><i
+                                        <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editUser"
+                                            onclick="setEditData({{ $data }})"><i
                                                 class="fa fa-edit"></i></button>
                                         <button type="button" data-toggle="modal" data-target="#deleteConfirm"
                                             class="btn btn-sm btn-danger" onclick="deleteThisUser({{ $data }})"><i
@@ -177,8 +201,8 @@
                             <div class="col-12">
                                 <label for="period">Email</label>
                                 <input class="form-control mb-1 @error('email') is-invalid @enderror" minlength="3"
-                                    type="email" id="email" placeholder="Contoh: briana67@gmail.com"
-                                    name="email" value="{{ old('email') }}">
+                                    type="email" id="email" placeholder="Contoh: briana67@gmail.com" name="email"
+                                    value="{{ old('email') }}">
                             </div>
                         </div>
 
@@ -239,7 +263,8 @@
                                 <label for="period">Pilih Pos</label>
                                 <select class="form-control mb-1" name="pos_id" id="pos_id">
                                     @foreach ($pos as $item)
-                                        <option value="{{$item->id}}">{{$item->nama}} ({{$item->alamat}})</option>
+                                        <option value="{{ $item->id }}">{{ $item->nama }} ({{ $item->alamat }})
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -255,30 +280,28 @@
         </div>
     </div>
 
-    @foreach ($user as $data)
-        <div class="modal fade" tabindex="-1" role="dialog" id="editUser{{ $data->id }}">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content modal-lg">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit User</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form action="{{ route('manajemen-user.update', $data->id) }}" method="post" id="editUserForm{{ $data->id }}"
-                        enctype="multipart/form-data">
-                        @csrf
-                        @method('put')
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type="hidden" value="{{ $data->username }}" id="checkUsername">
-                        <input type="hidden" value="{{ $data->email }}" id="checkEmail">
-                        <div class="modal-body">
+    <div class="modal fade" tabindex="-1" role="dialog" id="editUser">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content modal-lg">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('manajemen-user.update', '') }}" method="post" id="editUserForm"
+                    enctype="multipart/form-data">
+                    @csrf
+                    @method('put')
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <input type="hidden" id="checkUsername">
+                    <input type="hidden" id="checkEmail">
+                    <div class="modal-body">
                         <div class="form-group">
                             <div class="col-12">
                                 <label for="name">Nama Lengkap</label>
                                 <input class="form-control mb-1 @error('edit_fullname') is-invalid @enderror" type="text"
-                                    id="Edit" placeholder="Contoh: Briana White" name="edit_fullname"
-                                    value="{{ old('edit_fullname', $data->fullname) }}" required>
+                                    id="Edit" placeholder="Contoh: Briana White" name="edit_fullname" required>
 
                                 @error('edit_fullname')
                                     <span class="text-danger">{{ $message }}</span>
@@ -290,8 +313,7 @@
                             <div class="col-12">
                                 <label for="username">Username</label>
                                 <input class="form-control mb-1 @error('edit_username') is-invalid @enderror" type="text"
-                                    id="edit_username" placeholder="Contoh: briana67" name="edit_username"
-                                    value="{{ old('edit_username', $data->username) }}" required>
+                                    id="edit_username" placeholder="Contoh: briana67" name="edit_username" required>
                                 @error('edit_username')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -303,7 +325,7 @@
                                 <label for="email">Email</label>
                                 <input class="form-control mb-1 @error('edit_email') is-invalid @enderror" minlength="3"
                                     maxlength="35" type="email" id="edit_email" placeholder="Contoh: briana67@gmail.com"
-                                    name="edit_email" value="{{ old('edit_email', $data->email) }}" required>
+                                    name="edit_email" required>
                                 @error('edit_email')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -313,10 +335,10 @@
                         <div class="form-group">
                             <div class="col-12">
                                 <label for="role">Role</label>
-                                <select class="form-control mb-1 @error('edit_role') is-invalid @enderror" name="edit_role"
-                                    id="edit_role" required>
-                                    <option value="admin" {{ $data->role == 'admin' ? 'checked' : '' }}>Admin</option>
-                                    <option value="pos" {{ $data->role == 'pos' ? 'checked' : '' }}>Pos</option>
+                                <select class="form-control mb-1 @error('edit_role') is-invalid @enderror"
+                                    onchange="showEditPos(this.value)" name="edit_role" id="edit_role" required>
+                                    {{-- <option value="admin" {{ $data->role == 'admin' ? 'checked' : '' }}>Admin</option>
+                                    <option value="pos" {{ $data->role == 'pos' ? 'checked' : '' }}>Pos</option> --}}
                                 </select>
 
                                 @error('role')
@@ -324,16 +346,28 @@
                                 @enderror
                             </div>
                         </div>
+
+                        <div class="form-group" id="edit_pos_section" style="display: none">
+                            <div class="col-12">
+                                <label for="period">Pilih Pos</label>
+                                <select class="form-control mb-1" name="edit_pos_id" id="edit_pos_id">
+                                    {{-- @foreach ($pos as $item)
+                                        <option value="{{$item->id}}">{{$item->nama}} ({{$item->alamat}})</option>
+                                    @endforeach --}}
+                                </select>
+                            </div>
                         </div>
-                        <div class="modal-footer bg-whitesmoke br">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
-                            <button type="submit" class="btn btn-primary" id="editUserButton">Ubah</button>
-                        </div>
-                    </form>
-                </div>
+
+
+                    </div>
+                    <div class="modal-footer bg-whitesmoke br">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
+                        <button type="submit" class="btn btn-primary" id="editUserButton">Ubah</button>
+                    </div>
+                </form>
             </div>
         </div>
-    @endforeach
+    </div>
 
     <div class="modal fade" tabindex="-1" role="dialog" id="deleteConfirm">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -390,16 +424,57 @@
     <script src="https://cdn.datatables.net/fixedheader/3.1.9/js/dataTables.fixedHeader.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap.min.js"></script>
-
-    <script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.10.3/simple-lightbox.min.js" integrity="sha512-XGiM73niqHXRwBELBEktUKuGXC9yHyaxEsVWvUiCph8yxkaNkGeXJnqs5Ls1RSp4Q+PITMcCy2Dw7HxkzBWQCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>    <script>
         $(document).ready(function() {
             $('#user_table').DataTable();
         });
     </script>
     <script>
+var lightbox = new SimpleLightbox('.gallery a', { /* options */ });
+
+    </script>
+    <script>
         $('.dropify').dropify();
     </script>
+    <script>
+        const updateLink = $('#editUserForm').attr('action');
+        const idForm = $('#editUserForm').attr('id');
 
+        const checkUsernameId = $('#checkUsername').attr('id');
+        const checkEmailId = $('#checkEmail').attr('id');
+
+        function setEditData(data) {
+            $('#edit_pos_section').hide();
+            $("#edit_role").html('');
+            $("#edit_role").append(`<option value="admin" ${data.role} == 'admin' ? 'checked' : ''>Admin</option>`);
+            $("#edit_role").append(`<option value="pos" ${data.role} == 'pos' ? 'checked' : ''>Pos</option>`);
+
+
+
+            var posData = {!! json_encode($pos) !!};
+            $("#edit_pos_id").html('');
+            for (let [key, value] of Object.entries(posData)) {
+                $("#edit_pos_id").append(
+                    `<option value="${value.id}" ${value.id} == ${data.pos_id} ? 'checked' : ''>${value.nama}</option>`);
+            }
+
+            // make form id unique for jquery validaiton
+            $('#editUserForm').attr('id', `${idForm}${data.id}`);
+            $('#editUserForm' + data.id).attr('action', `${updateLink}/${data.id}`);
+
+            // make check unique
+            $('#checkUsername').attr('id', `${checkUsernameId}${data.id}`);
+            $('#checkUsername' + data.id).val(data.username);
+
+            $('#checkEmail').attr('id', `${checkEmailId}${data.id}`);
+            $('#checkEmail' + data.id).val(data.email);
+
+            $('[name="edit_fullname"]').val(data.fullname);
+            $('[name="edit_username"]').val(data.username);
+            $('[name="edit_email"]').val(data.email);
+            editPosGaturValidate(data);
+        }
+    </script>
     <script>
         $(document).ready(function() {
 
@@ -410,156 +485,156 @@
             });
 
             $("#tambahUserForm").validate({
-                    rules: {
-                      fullname: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 30,
-                        },
-                        username: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 30,
-                            remote: {
-                                url: "{{ route('user.checkUsername') }}",
-                                type: "post",
-                            }
-                        },
-                        email: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 100,
-                            remote: {
-                                url: "{{ route('user.checkEmail') }}",
-                                type: "post",
-                            }
-                        },
-                        password: {
-                            required: true,
-                            minlength: 2
-                        },
-                        password_confirmation: {
-                            required: true,
-                            equalTo: "#passwordId"
-                        },
-                        role: {
-                            required: true,
-                        },
+                rules: {
+                    fullname: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
                     },
-                    messages: {
-                        fullname: {
-                            required: "Nama harus di isi",
-                            minlength: "Nama tidak boleh kurang dari 3 karakter",
-                            maxlength: "Nama tidak boleh lebih dari 30 karakter"
-                        },
-                        username: {
-                            required: "Username harus di isi",
-                            minlength: "Username tidak boleh kurang dari 3 karakter",
-                            maxlength: "Username tidak boleh lebih dari 30 karakter",
-                            remote: "Username sudah tersedia"
+                    username: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        remote: {
+                            url: "{{ route('user.checkUsername') }}",
+                            type: "post",
+                        }
+                    },
+                    email: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        remote: {
+                            url: "{{ route('user.checkEmail') }}",
+                            type: "post",
+                        }
+                    },
+                    password: {
+                        required: true,
+                        minlength: 2
+                    },
+                    password_confirmation: {
+                        required: true,
+                        equalTo: "#passwordId"
+                    },
+                    role: {
+                        required: true,
+                    },
+                },
+                messages: {
+                    fullname: {
+                        required: "Nama harus di isi",
+                        minlength: "Nama tidak boleh kurang dari 3 karakter",
+                        maxlength: "Nama tidak boleh lebih dari 30 karakter"
+                    },
+                    username: {
+                        required: "Username harus di isi",
+                        minlength: "Username tidak boleh kurang dari 3 karakter",
+                        maxlength: "Username tidak boleh lebih dari 30 karakter",
+                        remote: "Username sudah tersedia"
 
-                        },
-                        email: {
-                            required: "Email harus di isi",
-                            email: "Email yang di isikan harus valid",
-                            minlength: "Email tidak boleh kurang dari 3 karakter",
-                            maxlength: "Email tidak boleh lebih dari 100 karakter",
-                            remote: "Email sudah tersedia"
-                        },
-                        password: {
-                            required: "Password harus di isi",
-                            minlength: "Password tidak boleh kurang dari 2 karakter"
-                        },
-                        password_confirmation: {
-                            required: "Konfirmasi Password harus di isi",
-                            equalTo: "Konfirmasi Password tidak sama"
-                        },
-                        role: {
-                            required: "Role harus di isi"
-                        },
                     },
-                    submitHandler: function(form) {
-                        $("#tambahButton").prop('disabled', true);
-                        form.submit();
-                    }
-                });
+                    email: {
+                        required: "Email harus di isi",
+                        email: "Email yang di isikan harus valid",
+                        minlength: "Email tidak boleh kurang dari 3 karakter",
+                        maxlength: "Email tidak boleh lebih dari 100 karakter",
+                        remote: "Email sudah tersedia"
+                    },
+                    password: {
+                        required: "Password harus di isi",
+                        minlength: "Password tidak boleh kurang dari 2 karakter"
+                    },
+                    password_confirmation: {
+                        required: "Konfirmasi Password harus di isi",
+                        equalTo: "Konfirmasi Password tidak sama"
+                    },
+                    role: {
+                        required: "Role harus di isi"
+                    },
+                },
+                submitHandler: function(form) {
+                    $("#tambahButton").prop('disabled', true);
+                    form.submit();
+                }
+            });
         });
 
-        function validateFormEdit (data) {
-        $("#editUserForm" + data.id).validate({
-          rules: {
-                        edit_fullname: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 30,
-                        },
-                        edit_username:{
-                            required: true,
-                            minlength: 3,
-                            maxlength: 30,
-                            remote: {
-                                param: {
-                                    url: "{{ route('user.checkUsername') }}",
-                                    type: "post",
-                                },
-                                depends: function(element) {
-                                    // compare name in form to hidden field
-                                    return ($(element).val() !== $('#checkUsername').val());
-                                },
-                               
-                            }
-                        },
-                        edit_email: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 30,
-                            remote: {
-                                param: {
-                                    url: "{{ route('user.checkEmail') }}",
-                                    type: "post",
-                                },
-                                depends: function(element) {
-                                    // compare name in form to hidden field
-                                    return ($(element).val() !== $('#checkEmail').val());
-                                },
-                               
-                            }
-                        },
-                        edit_role: {
-                            required: true,
-                        },
+        function validateFormEdit(data) {
+            $("#editUserForm" + data.id).validate({
+                rules: {
+                    edit_fullname: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
                     },
-                    messages: {
-                        edit_fullname: {
-                            required: "Nama harus di isi",
-                            minlength: "Nama tidak boleh kurang dari 3 karakter",
-                            maxlength: "Nama tidak boleh lebih dari 30 karakter"
-                        },
-                        edit_username: {
-                            required: "Username harus di isi",
-                            minlength: "Username tidak boleh kurang dari 3 karakter",
-                            maxlength: "Username tidak boleh lebih dari 30 karakter",
-                            remote: "Username sudah tersedia"
-                        },
-                        edit_email: {
-                            required: "Email harus di isi",
-                            email: "Email yang di isikan harus valid",
-                            minlength: "Email tidak boleh kurang dari 3 karakter",
-                            maxlength: "Email tidak boleh lebih dari 30 karakter",
-                            remote: "Email sudah tersedia"
-                        },
-                        edit_role: {
-                            required: "Role harus di isi"
-                        },
+                    edit_username: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        remote: {
+                            param: {
+                                url: "{{ route('user.checkUsername') }}",
+                                type: "post",
+                            },
+                            depends: function(element) {
+                                // compare name in form to hidden field
+                                return ($(element).val() !== $('#checkUsername').val());
+                            },
+
+                        }
                     },
+                    edit_email: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        remote: {
+                            param: {
+                                url: "{{ route('user.checkEmail') }}",
+                                type: "post",
+                            },
+                            depends: function(element) {
+                                // compare name in form to hidden field
+                                return ($(element).val() !== $('#checkEmail').val());
+                            },
+
+                        }
+                    },
+                    edit_role: {
+                        required: true,
+                    },
+                },
+                messages: {
+                    edit_fullname: {
+                        required: "Nama harus di isi",
+                        minlength: "Nama tidak boleh kurang dari 3 karakter",
+                        maxlength: "Nama tidak boleh lebih dari 30 karakter"
+                    },
+                    edit_username: {
+                        required: "Username harus di isi",
+                        minlength: "Username tidak boleh kurang dari 3 karakter",
+                        maxlength: "Username tidak boleh lebih dari 30 karakter",
+                        remote: "Username sudah tersedia"
+                    },
+                    edit_email: {
+                        required: "Email harus di isi",
+                        email: "Email yang di isikan harus valid",
+                        minlength: "Email tidak boleh kurang dari 3 karakter",
+                        maxlength: "Email tidak boleh lebih dari 30 karakter",
+                        remote: "Email sudah tersedia"
+                    },
+                    edit_role: {
+                        required: "Role harus di isi"
+                    },
+                },
                 submitHandler: function(form) {
                     $("#editUserButton").prop('disabled', true);
                     form.submit();
                 }
             });
-          }
+        }
 
-            // password show/hide toggle
+        // password show/hide toggle
         $(".toggle-password").click(function() {
             $(this).toggleClass("far fa-eye-slash");
             var password = document.getElementById("passwordId");
@@ -568,49 +643,49 @@
             } else {
                 password.type = "password";
             }
-    
+
         });
-    
+
         // password confirm show/hide toggle
         $(".toggle-password-confirm").click(function() {
             $(this).toggleClass("far fa-eye-slash");
             var passwordConfirm = document.getElementById("passwordConfirm");
-    
+
             if (passwordConfirm.type === "password") {
                 passwordConfirm.type = "text";
-    
+
             } else {
                 passwordConfirm.type = "password";
             }
-    
+
         });
-    
+
         // edit password show/hide toggle
         $(".toggle-edit-password").click(function() {
             $(this).toggleClass("far fa-eye-slash");
             var editPassword = document.getElementById("editPassword");
-    
+
             if (editPassword.type === "password") {
                 editPassword.type = "text";
-    
+
             } else {
                 editPassword.type = "password";
             }
-    
+
         });
-        
+
         // edit password confirm show/hide toggle
         $(".toggle-edit-password-confirm").click(function() {
             $(this).toggleClass("far fa-eye-slash");
             var editPasswordConfirm = document.getElementById("editPasswordConfirm");
-    
+
             if (editPasswordConfirm.type === "password") {
                 editPasswordConfirm.type = "text";
-    
+
             } else {
                 editPasswordConfirm.type = "password";
             }
-    
+
         });
 
         $("#deleteAllModalButton").click(function() {
@@ -631,6 +706,15 @@
             $('#pos_section').hide();
             if (val == 'pos') {
                 $('#pos_section').show();
+            }
+        }
+    </script>
+
+    <script>
+        function showEditPos(val) {
+            $('#edit_pos_section').hide();
+            if (val == 'pos') {
+                $('#edit_pos_section').show();
             }
         }
     </script>

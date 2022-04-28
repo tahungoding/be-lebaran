@@ -54,7 +54,10 @@ class PosGaturController extends Controller
 
     public function create()
     {
-        //
+        $data['pos'] = Pos::all();
+        $data['web'] = Web::all();
+
+        return view('back.pos_gatur.create', $data);
     }
 
     /**
@@ -88,7 +91,7 @@ class PosGaturController extends Controller
      */
     public function show($id)
     {
-        //
+        
     }
 
     /**
@@ -99,7 +102,11 @@ class PosGaturController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data['pos_gatur'] = PosGatur::find($id);
+        $data['pos'] = Pos::all();
+        $data['web'] = Web::all();
+
+        return view('back.pos_gatur.edit', $data);
     }
 
     /**
@@ -116,7 +123,8 @@ class PosGaturController extends Controller
         $data = [
             'nama' => $request->edit_nama ? $request->edit_nama : $pos_gatur->nama,
             'longitude' => $request->edit_longitude ? $request->edit_longitude : $pos_gatur->longitude,
-            'latitude' => $request->edit_latitude ? $request->edit_latitude : $pos_gatur->latitude,           
+            'latitude' => $request->edit_latitude ? $request->edit_latitude : $pos_gatur->latitude,  
+            'pos_id' => $request->edit_pos_id ? $request->edit_pos_id : $pos_gatur->pos_id,     
         ];
 
         $pos_gatur->update($data)
