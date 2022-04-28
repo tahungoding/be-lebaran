@@ -60,7 +60,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
     // Route::post('teams/destroy-all', [TeamController::class, 'destroyAll'])->name('teams.destroyAll');
 
     Route::resource('kecelakaan', KecelakaanController::class);
-    
+    Route::post('kecelakaan/upload', [KecelakaanController::class,'upload']);
+
     Route::resource('roles', RoleController::class);
     Route::post('roles/destroy-all', [RoleController::class, 'destroyAll'])->name('roles.destroyAll');
     Route::post('roles/check-roles-name', [RoleController::class, 'checkRoleName'])->name('checkRoleName');

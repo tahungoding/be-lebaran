@@ -108,7 +108,8 @@
         <div class="section-body">
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route('kecelakaan.store') }}" method="post" id="tambahKecelakaanForm">
+                    <form action="{{ route('kecelakaan.store') }}" method="post" id="tambahKecelakaanForm"
+                        enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="form-group col-md-6 col-12">
@@ -127,9 +128,13 @@
                             </div>
                             <div class="form-group col-md-12 col-12">
                                 <label>Detail Kejadian</label>
-                                <textarea name="detail_kejadian" class="form-control my-editor" id="my-editor" style="height: 30vh;"></textarea>
+                                <textarea name="detail_kejadian" class="form-control" style="height: 30vh;"></textarea>
                             </div>
-
+                            <div class="form-group col-md-12 col-12">
+                                <label>Upload Gambar (optional)</label>
+                                <input type="file" class="form-control dropify" name="file_pendukung" id="file_pendukung"
+                                    data-allowed-file-extensions="png jpg jpeg" data-show-remove="false">
+                            </div>
                             <div class="form-group col-md-12 col-12">
                                 <label>Map</label>
                                 <div id="map"></div>
@@ -145,7 +150,8 @@
                         </div>
                         <div class="card-footer text-right">
                             <a href="{{ route('kecelakaan.index') }}" class="btn btn-secondary">Kembali</a>
-                            <button type="submit" class="btn btn-primary" id="tambahKecelakaanButton">Simpan Perubahan</button>
+                            <button type="submit" class="btn btn-primary" id="tambahKecelakaanButton">Simpan
+                                Perubahan</button>
                         </div>
                     </form>
                 </div>
@@ -159,24 +165,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"
         integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.tiny.cloud/1/nnd7pakaxqr7isf3oqefsdlew1jsidgl78umfeus6tg21ng0/tinymce/5/tinymce.min.js"
+        referrerpolicy="origin"></script>
 
-    <script src="//cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
     <script>
-        var options = {
-            filebrowserImageBrowseUrl: '/laravel-filemanager?type=Images',
-            filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token=',
-            filebrowserBrowseUrl: '/laravel-filemanager?type=Files',
-            filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token='
-        };
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
     </script>
+
+
+<script>
+    $('.dropify').dropify();
+</script>
     <script>
         $(document).ready(function() {
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
 
             $("#tambahKecelakaanForm").validate({
                 rules: {
@@ -225,9 +230,6 @@
                 }
             });
         });
-    </script>
-    <script>
-        CKEDITOR.replace('my-editor', options);
     </script>
 
     <script type="text/javascript">

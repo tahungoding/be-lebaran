@@ -14,6 +14,7 @@
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "realrashid/sweet-alert": "^5.0",
+        "spatie/laravel-analytics": "^3.11",
         "unisharp/laravel-filemanager": "^2.4"
     },
     "require-dev": {

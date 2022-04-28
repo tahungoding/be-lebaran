@@ -6,10 +6,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Web;
 use App\Models\Pos;
+use App\Models\User;
 use App\Models\PosGatur;
 use App\Models\Kemacetan;
 use App\Models\Kecelakaan;
 use Illuminate\Support\Facades\Auth;
+use GuzzleHttp\Client;
+use Analytics;
+use Spatie\Analytics\Period;
+
+
 
 class DashboardController extends Controller
 {
@@ -23,12 +29,27 @@ class DashboardController extends Controller
         $data['web'] = Web::all();
         $data['pos'] = Pos::count();
         $data['pos_gatur'] = PosGatur::count();
+        $data['user'] = User::count();
         $data['kemacetan'] = Kemacetan::when(Auth::user()->role == 'pos', function ($query) {
             $query->where('pos_id', Auth::user()->pos_id);
         })->count();
         $data['kecelakaan'] = Kecelakaan::when(Auth::user()->role == 'pos', function ($query) {
             $query->where('pos_id', Auth::user()->pos_id);
         })->count();
+
+        $client = new Client(); //GuzzleHttp\Client
+        $url = "https://api.countapi.xyz/update/lebaran.sumedangkab.go.id/visitor?amount=1";
+
+
+        $response = $client->request('GET', $url, [
+            'verify'  => false,
+        ]);
+
+        $responseBody = json_decode($response->getBody());
+        $data['visitor'] = $responseBody;
+
+        // $data['analyticsData'] = Analytics::fetchVisitorsAndPageViews(Period::days(7));
+        
         return view('back.dashboard.index', $data);
     }
 

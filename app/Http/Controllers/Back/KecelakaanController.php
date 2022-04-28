@@ -8,6 +8,8 @@ use App\Models\Kecelakaan;
 use App\Models\Web;
 use Alert;
 use Storage;
+use File;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class KecelakaanController extends Controller
@@ -53,6 +55,7 @@ class KecelakaanController extends Controller
     //     }
     // }
 
+
     public function create()
     {
         $data['web'] = Web::all();
@@ -67,14 +70,28 @@ class KecelakaanController extends Controller
      */
     public function store(Request $request)
     {       
-        $file_pendukung = ($request->file_pendukung) ? $request->file('file_pendukung')->store("/public/input/kecelakaan") : null;
+        if ($request->hasFile('file_pendukung')) {
+            $file = $request->file('file_pendukung');
 
+            $file_pendukung = time() . "_" . $file->getClientOriginalName();
+
+            $tujuan_upload = public_path('images/kecelakaan');
+
+            $file->move($tujuan_upload, $file_pendukung);
+
+        } else {
+            $file_pendukung = null;
+        }
+        
+        $date = Carbon::now();
+        
         $data = [
             'lokasi' => $request->lokasi,
             'ringkas_kejadian' => $request->ringkas_kejadian,
             'detail_kejadian' => $request->detail_kejadian,
             'file_pendukung' => $file_pendukung,
             'waktu' => $request->waktu,
+            'tanggal' => $date->toFormattedDateString(),
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'user_id' => Auth::user()->id
@@ -129,12 +146,21 @@ class KecelakaanController extends Controller
     public function update(Request $request, $id)
     {
         $kecelakaan = Kecelakaan::findOrFail($id);
-        if($request->hasFile('edit_file_pendukung')) {
-            if(Storage::exists($kecelakaan->file_pendukung) && !empty($kecelakaan->file_pendukung)) {
-                Storage::delete($kecelakaan->file_pendukung);
+        
+        if ($request->hasFile('edit_file_pendukung')) {
+
+            $StoredImage = public_path("images/kecelakaan/{$kecelakaan->file_pendukung}");
+            if (File::exists($StoredImage) && !empty($kecelakaan->file_pendukung)) {
+                unlink($StoredImage);
             }
 
-            $edit_file_pendukung = $request->file("edit_file_pendukung")->store("/public/input/kecelakaan");
+            $file = $request->file('edit_file_pendukung');
+
+            $edit_file_pendukung = time() . "_" . $file->getClientOriginalName();
+
+            $tujuan_upload = public_path('images/kecelakaan');
+
+            $file->move($tujuan_upload, $edit_file_pendukung);
         }
         
         $data = [
@@ -143,6 +169,7 @@ class KecelakaanController extends Controller
             'detail_kejadian' => $request->edit_detail_kejadian ? $request->edit_detail_kejadian : $kecelakaan->detail_kejadian,
             'file_pendukung' => $request->hasFile('edit_file_pendukung') ? $edit_file_pendukung : $kecelakaan->file_pendukung,          
             'waktu' => $request->edit_waktu ? $request->edit_waktu : $kecelakaan->waktu,
+            'tanggal' => $kecelakaan->tanggal,
             'latitude' => $request->edit_latitude ? $request->edit_latitude : $kecelakaan->latitude,
             'longitude' => $request->edit_longitude ? $request->edit_longitude : $kecelakaan->longitude,
         ];

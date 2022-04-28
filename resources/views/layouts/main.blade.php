@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" id="_token" content="{{ csrf_token() }}">
     <title>@yield('title') / Sumedang LRT</title>
 
     <!-- General CSS Files -->
@@ -203,12 +203,12 @@
                             <li
                                 class="{{ request()->routeIs('kecelakaan.index') ||request()->routeIs('kecelakaan.create') ||request()->routeIs('kecelakaan.edit')? 'active': '' }}">
                                 <a class="nav-link"
-                                    @if ((request()->routeIs('kecelakaan.index') && isset($primary_color)) || request()->routeIs('kecelakaan.create') || request()->routeIs('kecelakaan.edit')) style="color: {{ $primary_color }};" @endif
+                                    @if ((request()->routeIs('kecelakaan.index') && isset($primary_color)) || request()->routeIs('kecelakaan.create') || request()->routeIs('kecelakaan.edit') || request()->routeIs('kecelakaan.show')) style="color: {{ $primary_color }};" @endif
                                     href="{{ route('kecelakaan.index') }}"><i class="fas fa-car-crash"></i>
                                     <span>Kecelakaan</span></a></li>
                             <li class="{{ request()->routeIs('kemacetan.index') ? 'active' : '' }}"><a
                                     class="nav-link"
-                                    @if ((request()->routeIs('kemacetan.index') && isset($primary_color)) || request()->routeIs('kemacetan.create') || request()->routeIs('kemacetan.edit')) style="color: {{ $primary_color }};" @endif
+                                    @if ((request()->routeIs('kemacetan.index') && isset($primary_color)) || request()->routeIs('kemacetan.create') || request()->routeIs('kemacetan.edit') || request()->routeIs('kemacetan.show')) style="color: {{ $primary_color }};" @endif
                                     href="{{ route('kemacetan.index') }}"><i class="fas fa-traffic-light"></i>
                                     <span>Kemacetan</span></a></li>
                         @endif
