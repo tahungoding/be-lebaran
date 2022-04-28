@@ -8,6 +8,7 @@ use App\Models\Web;
 use Storage;
 use Alert;
 use Auth;
+use File;
 
 class ProfileWebController extends Controller
 {
@@ -44,8 +45,19 @@ class ProfileWebController extends Controller
      */
     public function store(Request $request)
     {
-        $logo = ($request->logo) ? $request->file('logo')->store("/public/input/profile_web") : null;
-        
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo');
+
+            $logo = time() . "_" . $file->getClientOriginalName();
+
+            $tujuan_upload = 'images/logo';
+
+            $file->move($tujuan_upload, $logo);
+        } else {
+            $logo = null;
+        }
+
+ 
         $data = [
             'logo' => $logo,
             'primary_color' => $request->primary_color,
@@ -100,13 +112,22 @@ class ProfileWebController extends Controller
     public function update(Request $request, $id)
     {
         $web = Web::findOrFail($id);
-        if($request->hasFile('edit_logo')) {
-            if(Storage::exists($web->logo) && !empty($web->logo)) {
-                Storage::delete($web->logo);
+        if ($request->hasFile('edit_logo')) {
+
+            $StoredImage = public_path("images/logo/{$web->logo}");
+            if (File::exists($StoredImage) && !empty($web->logo)) {
+                unlink($StoredImage);
             }
 
-            $edit_logo = $request->file("edit_logo")->store("/public/input/profile_web");
+            $file = $request->file('edit_logo');
+
+            $edit_logo = time() . "_" . $file->getClientOriginalName();
+
+            $tujuan_upload = public_path('images/logo');
+
+            $file->move($tujuan_upload, $edit_logo);
         }
+
         $data = [
             'logo' =>  $request->hasFile('edit_logo') ? $edit_logo : $web->logo,
             'primary_color' => $request->edit_primary_color ? $request->edit_primary_color : $web->primary_color,

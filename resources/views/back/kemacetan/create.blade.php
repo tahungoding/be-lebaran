@@ -108,7 +108,7 @@
         <div class="section-body">
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route('kemacetan.store') }}" method="post">
+                    <form action="{{ route('kemacetan.store') }}" method="post" id="tambahKemacetanForm">
                         @csrf
                     <div class="row">
                         <div class="form-group col-md-6 col-12">
@@ -144,7 +144,7 @@
                         </div>
                     </div>
                     <div class="card-footer text-right">
-                        <a href="{{ route('kemacetan.index') }}" class="btn btn-primary">Kembali</a>
+                        <a href="{{ route('kemacetan.index') }}" class="btn btn-secondary">Kembali</a>
                         <button type="submit" class="btn btn-primary" id="tambahKemacetanButton">Simpan Perubahan</button>
                     </div>
                 </form>
@@ -186,7 +186,7 @@
             }
         });
     
-        $("#tambahKecelakaanForm").validate({
+        $("#tambahKemacetanForm").validate({
             rules: {
                 lokasi:{
                     required: true,

@@ -177,6 +177,9 @@
         };
     </script>
     <script>
+        $('.dropify').dropify();
+    </script>
+    <script>
         CKEDITOR.replace('my-editor', options);
     </script>
     <script>
