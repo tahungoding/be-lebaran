@@ -118,6 +118,7 @@
                                 <th>Lokasi</th>
                                 <th>Detail</th>
                                 <th>Status</th>
+                                <th>Tanggal</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -137,6 +138,7 @@
                                         <span class="badge badge-success">{{ strtoupper($data->status) }}</span>
                                         @endif
                                     </td>
+                                    <td>{{ $data->created_at }}</td>
                                     <td>
                                         <a href="{{ route('kemacetan.edit', $data->id) }}"
                                             class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
