@@ -112,11 +112,19 @@
                         enctype="multipart/form-data">
                         @csrf
                         <div class="row">
-                            <div class="form-group col-md-6 col-12">
+                            <div class="form-group col-md-4 col-12">
                                 <label>Lokasi</label>
                                 <input type="text" class="form-control" name="lokasi" placeholder="Lokasi">
                             </div>
-                            <div class="form-group col-md-6 col-12">
+                            <div class="form-group col-md-4 col-12">
+                                <label>Pos</label>
+                                <select name="nama_pos" class="form-control">
+                                    @foreach ($pos as $posData)
+                                        <option value="{{ $posData->nama }}">{{ $posData->nama }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4 col-12">
                                 <label>Waktu</label>
                                 <input type="time" name="waktu" class="form-control">
                             </div>
@@ -135,6 +143,7 @@
                                 <input type="file" class="form-control dropify" name="file_pendukung" id="file_pendukung"
                                     data-allowed-file-extensions="png jpg jpeg" data-show-remove="false">
                             </div>
+                            
                             <div class="form-group col-md-12 col-12">
                                 <label>Map</label>
                                 <div id="map"></div>
@@ -191,6 +200,9 @@
                     ringkas_kejadian: {
                         required: true,
                     },
+                    nama_pos: {
+                        required: true,
+                    },
                     detail_kejadian: {
                         required: true,
                     },
@@ -210,6 +222,9 @@
                     },
                     ringkas_kejadian: {
                         required: "Ringkasan Kejadian harus di isi",
+                    },
+                    nama_pos: {
+                        required: "Nama Pos harus di isi",
                     },
                     detail_kejadian: {
                         required: "Detail Kejadian harus di isi",

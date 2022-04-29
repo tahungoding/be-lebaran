@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Kecelakaan;
 use App\Models\Web;
+use App\Models\Pos;
+
 use Alert;
 use Storage;
 use File;
@@ -55,10 +57,26 @@ class KecelakaanController extends Controller
     //     }
     // }
 
+    public function status(Request $request, $id)
+    {
+        $kecelakaan = Kecelakaan::where('id', $id)->first();
+
+            $data = [   
+                'status' => $request->status
+            ];
+
+        $kecelakaan->update($data)
+        ? Alert::success('Berhasil', "Status Kecelakaan telah berhasil diubah!")
+        : Alert::error('Error', "Status Kecelakaan gagal diubah!");
+
+        return redirect()->back();
+    }
 
     public function create()
     {
         $data['web'] = Web::all();
+        $data['pos'] = Pos::all();
+
         return view('back.kecelakaan.create', $data);
     }
 
@@ -70,21 +88,12 @@ class KecelakaanController extends Controller
      */
     public function store(Request $request)
     {       
-        if ($request->hasFile('file_pendukung')) {
-            $file = $request->file('file_pendukung');
+        $file_pendukung = ($request->file_pendukung) ? $request->file('file_pendukung')->store("/public/input/kecelakaan") : null;
 
-            $file_pendukung = time() . "_" . $file->getClientOriginalName();
-
-            $tujuan_upload = public_path('images/kecelakaan');
-
-            $file->move($tujuan_upload, $file_pendukung);
-
-        } else {
-            $file_pendukung = null;
-        }
-        
         $date = Carbon::now();
-        
+
+        $posIdVar = Pos::where('nama', '=', $request->nama_pos)->first();
+
         $data = [
             'lokasi' => $request->lokasi,
             'ringkas_kejadian' => $request->ringkas_kejadian,
@@ -94,12 +103,10 @@ class KecelakaanController extends Controller
             'tanggal' => $date->toFormattedDateString(),
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
-            'user_id' => Auth::user()->id
+            'user_id' => Auth::user()->id,
+            'nama_pos' => $request->nama_pos,
+            'pos_id' => $posIdVar->id,
         ];
-
-        if (Auth::user()->role != 'admin') {
-            $data['pos_id'] = Auth::user()->pos_id;
-        }
 
         Kecelakaan::create($data)
         ? Alert::success('Berhasil', 'Data Kecelakaan telah berhasil ditambahkan!')
@@ -131,6 +138,7 @@ class KecelakaanController extends Controller
     public function edit($id)
     {
         $data['kecelakaan'] = Kecelakaan::find($id);
+        $data['pos'] = Pos::all();
         $data['web'] = Web::all();
 
         return view('back.kecelakaan.edit', $data);
@@ -147,21 +155,15 @@ class KecelakaanController extends Controller
     {
         $kecelakaan = Kecelakaan::findOrFail($id);
         
-        if ($request->hasFile('edit_file_pendukung')) {
-
-            $StoredImage = public_path("images/kecelakaan/{$kecelakaan->file_pendukung}");
-            if (File::exists($StoredImage) && !empty($kecelakaan->file_pendukung)) {
-                unlink($StoredImage);
+        if($request->hasFile('edit_file_pendukung')) {
+            if(Storage::exists($kecelakaan->file_pendukung) && !empty($kecelakaan->file_pendukung)) {
+                Storage::delete($kecelakaan->file_pendukung);
             }
 
-            $file = $request->file('edit_file_pendukung');
-
-            $edit_file_pendukung = time() . "_" . $file->getClientOriginalName();
-
-            $tujuan_upload = public_path('images/kecelakaan');
-
-            $file->move($tujuan_upload, $edit_file_pendukung);
+            $edit_file_pendukung = $request->file("edit_file_pendukung")->store("/public/input/kecelakaan");
         }
+        
+        $posIdVar = Pos::where('nama', '=', $request->edit_nama_pos)->first();
         
         $data = [
             'lokasi' => $request->edit_lokasi ? $request->edit_lokasi : $kecelakaan->lokasi,
@@ -172,6 +174,8 @@ class KecelakaanController extends Controller
             'tanggal' => $kecelakaan->tanggal,
             'latitude' => $request->edit_latitude ? $request->edit_latitude : $kecelakaan->latitude,
             'longitude' => $request->edit_longitude ? $request->edit_longitude : $kecelakaan->longitude,
+            'nama_pos' => $request->edit_nama_pos ? $request->edit_nama_pos : $kecelakaan->nama_pos,
+            'pos_id' => $posIdVar->id ? $posIdVar->id : $kemacetan->pos_id,
         ];
 
         $kecelakaan->update($data)

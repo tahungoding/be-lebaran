@@ -55,12 +55,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
     // Route::post('testimony/pagination', [TestimonyController::class, 'testimonyPagination'])->name('testimonyPagination');
 
     Route::resource('kemacetan', KemacetanController::class);
+    Route::post('kemacetan/status/{id}', [KemacetanController::class,'status'])->name('kemacetan.status');
 
     Route::get('map', [KemacetanController::class,'map']);
     // Route::post('teams/destroy-all', [TeamController::class, 'destroyAll'])->name('teams.destroyAll');
 
     Route::resource('kecelakaan', KecelakaanController::class);
-    Route::post('kecelakaan/upload', [KecelakaanController::class,'upload']);
+    Route::post('kecelakaan/status/{id}', [KecelakaanController::class,'status'])->name('kecelakaan.status');
 
     Route::resource('roles', RoleController::class);
     Route::post('roles/destroy-all', [RoleController::class, 'destroyAll'])->name('roles.destroyAll');

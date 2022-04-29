@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Kemacetan;
 use App\Models\Web;
+use App\Models\Pos;
+
 use Alert;
 use Storage;
 use File;
@@ -63,6 +65,8 @@ class KemacetanController extends Controller
     public function create()
     {
         $data['web'] = Web::all();
+        $data['pos'] = Pos::all();
+
         return view('back.kemacetan.create', $data);
     }
 
@@ -74,20 +78,12 @@ class KemacetanController extends Controller
      */
     public function store(Request $request)
     {       
-        if ($request->hasFile('file_pendukung')) {
-            $file = $request->file('file_pendukung');
-
-            $file_pendukung = time() . "_" . $file->getClientOriginalName();
-
-            $tujuan_upload = public_path('images/kecamatan');
-
-            $file->move($tujuan_upload, $file_pendukung);
-
-        } else {
-            $file_pendukung = null;
-        }
+        $file_pendukung = ($request->file_pendukung) ? $request->file('file_pendukung')->store("/public/input/kemacetan") : null;
         
         $date = Carbon::now();
+
+        $posIdVar = Pos::where('nama', '=', $request->nama_pos)->first();
+
         $data = [
             'lokasi' => $request->lokasi,
             'ringkas_kejadian' => $request->ringkas_kejadian,
@@ -97,12 +93,11 @@ class KemacetanController extends Controller
             'tanggal' => $date->toFormattedDateString(),
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
+            'nama_pos' => $request->nama_pos,
+            'pos_id' => $posIdVar->id,
+            'status' => 'on',
             'user_id' => Auth::user()->id
         ];
-
-        if (Auth::user()->role != 'admin') {
-            $data['pos_id'] = Auth::user()->pos_id;
-        }
 
         Kemacetan::create($data)
         ? Alert::success('Berhasil', 'Data Kemacetan telah berhasil ditambahkan!')
@@ -117,6 +112,22 @@ class KemacetanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function status(Request $request, $id)
+    {
+        $kemacetan = Kemacetan::where('id', $id)->first();
+
+            $data = [   
+                'status' => $request->status
+            ];
+
+        $kemacetan->update($data)
+        ? Alert::success('Berhasil', "Status Kemacetan telah berhasil diubah!")
+        : Alert::error('Error', "Status Kemacetan gagal diubah!");
+
+        return redirect()->back();
+    }
+
+
     public function show($id)
     {
         $data['kemacetan'] = Kemacetan::find($id);
@@ -134,6 +145,7 @@ class KemacetanController extends Controller
     public function edit($id)
     {
         $data['kemacetan'] = Kemacetan::find($id);
+        $data['pos'] = Pos::all();
         $data['web'] = Web::all();
 
         return view('back.kemacetan.edit', $data);
@@ -150,21 +162,15 @@ class KemacetanController extends Controller
     {
         $kemacetan = Kemacetan::findOrFail($id);
 
-        if ($request->hasFile('edit_file_pendukung')) {
-
-            $StoredImage = public_path("images/kemacetan/{$kemacetan->file_pendukung}");
-            if (File::exists($StoredImage) && !empty($kemacetan->file_pendukung)) {
-                unlink($StoredImage);
+        if($request->hasFile('edit_file_pendukung')) {
+            if(Storage::exists($kemacetan->file_pendukung) && !empty($kemacetan->file_pendukung)) {
+                Storage::delete($kemacetan->file_pendukung);
             }
 
-            $file = $request->file('edit_file_pendukung');
-
-            $edit_file_pendukung = time() . "_" . $file->getClientOriginalName();
-
-            $tujuan_upload = public_path('images/kemacetan');
-
-            $file->move($tujuan_upload, $edit_file_pendukung);
+            $edit_file_pendukung = $request->file("edit_file_pendukung")->store("/public/input/kecamatan");
         }
+
+        $posIdVar = Pos::where('nama', '=', $request->edit_nama_pos)->first();
 
         $data = [
             'lokasi' => $request->edit_lokasi ? $request->edit_lokasi : $kemacetan->lokasi,
@@ -175,6 +181,8 @@ class KemacetanController extends Controller
             'tanggal' => $kemacetan->tanggal,
             'latitude' => $request->edit_latitude ? $request->edit_latitude : $kemacetan->latitude,
             'longitude' => $request->edit_longitude ? $request->edit_longitude : $kemacetan->longitude,
+            'nama_pos' => $request->edit_nama_pos ? $request->edit_nama_pos : $kemacetan->nama_pos,
+            'pos_id' => $posIdVar->id ? $posIdVar->id : $kemacetan->pos_id,
         ];
 
         $kemacetan->update($data)

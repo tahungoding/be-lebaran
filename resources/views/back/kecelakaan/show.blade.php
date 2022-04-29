@@ -111,11 +111,19 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="form-group col-md-6 col-12">
+                        <div class="form-group col-md-4 col-12">
                             <label>Lokasi</label>
                             <input type="text" class="form-control" name="edit_lokasi" placeholder="Lokasi" value="{{ $kecelakaan->lokasi }}" readonly>
                         </div>
-                        <div class="form-group col-md-6 col-12">
+                        <div class="form-group col-md-4 col-12">
+                            <label>Pos</label>
+                            <select class="form-control">
+                                @foreach($pos as $posData)
+                                    <option value="{{ $posData->nama }}" {{ $posData->nama == $kecelakaan->nama_pos ? 'selected' : null }}>{{ $posData->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4 col-12">
                             <label>Waktu</label>
                             <input type="time" name="edit_waktu" class="form-control" value="{{ $kecelakaan->waktu }}" readonly>
                         </div>
@@ -132,11 +140,12 @@
                         <div class="form-group col-md-12 col-12">
                             <label>Upload Gambar (optional)</label>
                             <div class="gallery" style="overflow: hidden;">
-                                @if(!empty($kecelakaan->file_pendukung) && file_exists(public_path('images/kecelakaan/'. $kecelakaan->file_pendukung)))
-                                <a href="{{ asset('images/kecelakaan/'. $kecelakaan->file_pendukung) }}"><img src="{{ asset('images/kecelakaan/'. $kecelakaan->file_pendukung) }}" style="width: 150px; height: 150px; object-fit: cover;"/></a>
+                                @if(Storage::exists($kecelakaan->file_pendukung) && !empty($kecelakaan->file_pendukung))
+                                <a href="{{ Storage::url($kecelakaan->file_pendukung) }}"><img src="{{ Storage::url($kecelakaan->file_pendukung) }}" style="width: 150px; height: 150px; object-fit: cover;"/></a>
                                 @endif
                             </div>
                         </div>
+                        
                         <div class="form-group col-md-12 col-12">
                             <label>Map</label>
                             <div id="map"></div>
