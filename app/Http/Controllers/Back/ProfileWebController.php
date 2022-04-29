@@ -112,21 +112,15 @@ class ProfileWebController extends Controller
     public function update(Request $request, $id)
     {
         $web = Web::findOrFail($id);
-        if ($request->hasFile('edit_logo')) {
 
-            $StoredImage = public_path("images/logo/{$web->logo}");
-            if (File::exists($StoredImage) && !empty($web->logo)) {
-                unlink($StoredImage);
+        if($request->hasFile('edit_logo')) {
+            if(Storage::exists($web->logo) && !empty($web->logo)) {
+                Storage::delete($web->logo);
             }
 
-            $file = $request->file('edit_logo');
-
-            $edit_logo = time() . "_" . $file->getClientOriginalName();
-
-            $tujuan_upload = public_path('images/logo');
-
-            $file->move($tujuan_upload, $edit_logo);
+            $edit_logo = $request->file("edit_logo")->store("/public/input/profile_web");
         }
+        
 
         $data = [
             'logo' =>  $request->hasFile('edit_logo') ? $edit_logo : $web->logo,
