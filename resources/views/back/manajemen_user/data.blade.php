@@ -127,8 +127,8 @@
                                     <td>{{ $data->email }}</td>
                                     <td>
                                         <div class="gallery" style="overflow: hidden;">
-                                            @if(Storage::exists($data->photo) && !empty($data->photo))
-                                            <a href="{{ asset('images/user/'. $data->photo) }}"><img src="{{ asset('images/user/'. $data->photo) }}" style="width: 60px; height: 60px; object-fit: cover;"/></a>
+                                            @if($data->photo && !empty($data->photo))
+                                            <a href="{{ $data->photo }}"><img src="{{ $data->photo }}" style="width: 60px; height: 60px; object-fit: cover;"/></a>
                                             @else
                                             <a href="{{ asset('assets/img/avatar/avatar-1.png') }}" style="width: 60px; height: 60px; object-fit: cover;"><img src="{{ asset('assets/img/avatar/avatar-1.png') }}" style="width: 60px; height: 60px; object-fit: cover;"/></a>
                                             @endif

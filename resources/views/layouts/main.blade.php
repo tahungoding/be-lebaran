@@ -144,7 +144,7 @@
                             class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                             <div class="image-container">
                                 <img alt="image"
-                                    src="@if(!empty(Auth::user()->photo) && Storage::exists(Auth::user()->photo)) {{ Storage::exists(Auth::user()->photo) }} @else {{ asset('assets/img/avatar/avatar-1.png') }} @endif"
+                                    src="@if(!empty(Auth::user()->photo) && Auth::user()->photo) {{ Auth::user()->photo }} @else {{ asset('assets/img/avatar/avatar-1.png') }} @endif"
                                     style="object-fit: cover !important;" class="mr-1">
                             </div>
                             <div class="d-sm-none d-lg-inline-block">{{ Auth::user()->fullname }}</div>
@@ -167,8 +167,8 @@
                 <aside id="sidebar-wrapper">
                     <div class="sidebar-brand">
                         @foreach ($web as $webs)
-                            @if(!empty($webs->logo) && Storage::exists($webs->logo))
-                                <img alt="image" src="{{ Storage::exists($webs->logo) }}" class="img-fluid mr-5 mt-4"
+                            @if(!empty($webs->logo) && $webs->logo)
+                                <img alt="image" src="{{ $webs->logo }}" class="img-fluid mr-5 mt-4"
                                 style="width:150px;">
                             @else
                                 <a href="{{ route('dashboard.index') }}">{{ $webs->name }}</a>

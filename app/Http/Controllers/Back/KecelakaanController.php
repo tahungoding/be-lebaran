@@ -88,7 +88,18 @@ class KecelakaanController extends Controller
      */
     public function store(Request $request)
     {       
-        $file_pendukung = ($request->file_pendukung) ? $request->file('file_pendukung')->store("/public/input/kecelakaan") : null;
+        if ($request->hasFile('file_pendukung')) {
+            $file = $request->file('file_pendukung');
+
+            $file_pendukung = config('app.url') . '/images/kecelakaan/' .  time() . "_" . $file->getClientOriginalName();
+
+            $tujuan_upload = public_path('images/kecelakaan');
+
+            $file->move($tujuan_upload, $file_pendukung);
+            
+        } else {
+            $file_pendukung = null;
+        }
 
         $date = Carbon::now();
 
@@ -124,6 +135,8 @@ class KecelakaanController extends Controller
     public function show($id)
     {
         $data['kecelakaan'] = Kecelakaan::find($id);
+        $data['pos'] = Pos::all();
+
         $data['web'] = Web::all();
 
         return view('back.kecelakaan.show', $data);
@@ -155,12 +168,20 @@ class KecelakaanController extends Controller
     {
         $kecelakaan = Kecelakaan::findOrFail($id);
         
-        if($request->hasFile('edit_file_pendukung')) {
-            if(Storage::exists($kecelakaan->file_pendukung) && !empty($kecelakaan->file_pendukung)) {
-                Storage::delete($kecelakaan->file_pendukung);
+        if ($request->hasFile('edit_file_pendukung')) {
+
+            $StoredImage = public_path("images/kecelakaan/{$kecelakaan->file_pendukung}");
+            if (File::exists($StoredImage) && !empty($kecelakaan->file_pendukung)) {
+                unlink($StoredImage);
             }
 
-            $edit_file_pendukung = $request->file("edit_file_pendukung")->store("/public/input/kecelakaan");
+            $file = $request->file('edit_file_pendukung');
+
+            $edit_file_pendukung = config('app.url') . '/images/kecelakaan/' . time() . "_" . $file->getClientOriginalName();
+
+            $tujuan_upload = public_path('images/kecelakaan');
+
+            $file->move($tujuan_upload, $edit_file_pendukung);
         }
         
         $posIdVar = Pos::where('nama', '=', $request->edit_nama_pos)->first();
@@ -175,7 +196,7 @@ class KecelakaanController extends Controller
             'latitude' => $request->edit_latitude ? $request->edit_latitude : $kecelakaan->latitude,
             'longitude' => $request->edit_longitude ? $request->edit_longitude : $kecelakaan->longitude,
             'nama_pos' => $request->edit_nama_pos ? $request->edit_nama_pos : $kecelakaan->nama_pos,
-            'pos_id' => $posIdVar->id ? $posIdVar->id : $kemacetan->pos_id,
+            'pos_id' => $posIdVar->id ? $posIdVar->id : $kecelakaan->pos_id,
         ];
 
         $kecelakaan->update($data)
