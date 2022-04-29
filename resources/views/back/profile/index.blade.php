@@ -101,7 +101,7 @@
                                 <div class="form-group col-md-6 col-12">
                                     <label>Foto</label>
                                     <input type="file" class="form-control dropify" name="photo"
-                                        data-allowed-file-extensions="png jpg jpeg svg" data-show-remove="false" data-default-file="@if(!empty(Auth::user()->photo) && Storage::exists(Auth::user()->photo)) {{ Storage::exists(Auth::user()->photo)p }} @endif">
+                                        data-allowed-file-extensions="png jpg jpeg svg" data-show-remove="false" data-default-file="@if(!empty(Auth::user()->photo) && Storage::exists(Auth::user()->photo)) {{ Storage::exists(Auth::user()->photo) }} @endif">
                                 </div>
                             </div>
                             <div class="card-footer text-right">

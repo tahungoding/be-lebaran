@@ -65,20 +65,12 @@ class LoginController extends Controller
     {
         $user = User::findOrFail($id);
 
-        if ($request->hasFile('photo')) {
-
-            $StoredImage = public_path("images/user/{$user->photo}");
-            if (File::exists($StoredImage) && !empty($user->photo)) {
-                unlink($StoredImage);
+        if($request->hasFile('photo')) {
+            if(Storage::exists($user->photo) && !empty($user->photo)) {
+                Storage::delete($user->photo);
             }
 
-            $file = $request->file('photo');
-
-            $photo = time() . "_" . $file->getClientOriginalName();
-
-            $tujuan_upload = public_path('images/user');
-
-            $file->move($tujuan_upload, $photo);
+            $photo = $request->file("photo")->store("/public/input/user");
         }
         
         $data = [
