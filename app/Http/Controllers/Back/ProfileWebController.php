@@ -113,12 +113,20 @@ class ProfileWebController extends Controller
     {
         $web = Web::findOrFail($id);
 
-        if($request->hasFile('edit_logo')) {
-            if(Storage::exists($web->logo) && !empty($web->logo)) {
-                Storage::delete($web->logo);
+        if ($request->hasFile('edit_logo')) {
+
+            $StoredImage = public_path("images/profile_web/{$web->logo}");
+            if (File::exists($StoredImage) && !empty($web->logo)) {
+                unlink($StoredImage);
             }
 
-            $edit_logo = $request->file("edit_logo")->store("/public/input/profile_web");
+            $file = $request->file('edit_logo');
+
+            $edit_logo = config('app.url') . '/images/profile_web/' . time() . "_" . $file->getClientOriginalName();
+
+            $tujuan_upload = public_path('images/profile_web');
+
+            $file->move($tujuan_upload, $edit_logo);
         }
         
 

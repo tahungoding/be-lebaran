@@ -142,7 +142,7 @@
                         <div class="form-group col-md-12 col-12">
                             <label>Upload Gambar (optional)</label>
                             <input type="file" class="form-control dropify" name="edit_file_pendukung" id="edit_file_pendukung"
-                                data-allowed-file-extensions="png jpg jpeg" data-show-remove="false" data-default-file="{{ Storage::url($kemacetan->file_pendukung) }}">
+                                data-allowed-file-extensions="png jpg jpeg" data-show-remove="false" data-default-file="{{ $kemacetan->file_pendukung }}">
                         </div>
                         
                         <div class="form-group col-md-12 col-12">

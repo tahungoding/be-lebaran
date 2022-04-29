@@ -146,9 +146,9 @@
                         <div class="form-group col-md-12 col-12">
                             <label>Upload Gambar (optional)</label>
                             <div class="gallery" style="overflow: hidden;">
-                                @if (Storage::exists($kemacetan->file_pendukung) && !empty($kemacetan->file_pendukung))
-                                    <a href="{{ Storage::url($kemacetan->file_pendukung) }}"><img
-                                            src="{{ Storage::url($kemacetan->file_pendukung) }}"
+                                @if ($kemacetan->file_pendukung && !empty($kemacetan->file_pendukung))
+                                    <a href="{{ $kemacetan->file_pendukung }}"><img
+                                            src="{{ $kemacetan->file_pendukung }}"
                                             style="width: 150px; height: 150px; object-fit: cover;" /></a>
                                 @endif
                             </div>

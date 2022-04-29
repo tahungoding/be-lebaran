@@ -78,8 +78,19 @@ class KemacetanController extends Controller
      */
     public function store(Request $request)
     {       
-        $file_pendukung = ($request->file_pendukung) ? $request->file('file_pendukung')->store("/public/input/kemacetan") : null;
-        
+        if ($request->hasFile('file_pendukung')) {
+            $file = $request->file('file_pendukung');
+
+            $file_pendukung = config('app.url') . '/images/kemacetan/' .  time() . "_" . $file->getClientOriginalName();
+
+            $tujuan_upload = public_path('images/kemacetan');
+
+            $file->move($tujuan_upload, $file_pendukung);
+            
+        } else {
+            $file_pendukung = null;
+        }
+
         $date = Carbon::now();
 
         $posIdVar = Pos::where('nama', '=', $request->nama_pos)->first();
@@ -131,6 +142,8 @@ class KemacetanController extends Controller
     public function show($id)
     {
         $data['kemacetan'] = Kemacetan::find($id);
+        $data['pos'] = Pos::all();
+
         $data['web'] = Web::all();
 
         return view('back.kemacetan.show', $data);
@@ -162,12 +175,20 @@ class KemacetanController extends Controller
     {
         $kemacetan = Kemacetan::findOrFail($id);
 
-        if($request->hasFile('edit_file_pendukung')) {
-            if(Storage::exists($kemacetan->file_pendukung) && !empty($kemacetan->file_pendukung)) {
-                Storage::delete($kemacetan->file_pendukung);
+        if ($request->hasFile('edit_file_pendukung')) {
+
+            $StoredImage = public_path("images/kemacetan/{$kemacetan->file_pendukung}");
+            if (File::exists($StoredImage) && !empty($kemacetan->file_pendukung)) {
+                unlink($StoredImage);
             }
 
-            $edit_file_pendukung = $request->file("edit_file_pendukung")->store("/public/input/kecamatan");
+            $file = $request->file('edit_file_pendukung');
+
+            $edit_file_pendukung = config('app.url') . '/images/kemacetan/' . time() . "_" . $file->getClientOriginalName();
+
+            $tujuan_upload = public_path('images/kemacetan');
+
+            $file->move($tujuan_upload, $edit_file_pendukung);
         }
 
         $posIdVar = Pos::where('nama', '=', $request->edit_nama_pos)->first();
