@@ -127,6 +127,7 @@
                                 <th>#</th>
                                 <th>Lokasi</th>
                                 <th>Detail</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -138,7 +139,16 @@
                                 <tr>
                                     <td>{{ $increment++ }}</td>
                                     <td>{{ $data->lokasi }}</td>
-                                    <td><a href="{{ route('kecelakaan.show', $data->id) }}"><i class="fas fa-eye"></i></a></td>
+                                    <td><a href="{{ route('kecelakaan.show', $data->id) }}"><i
+                                                class="fas fa-eye"></i></a>
+                                    </td>
+                                    <td>
+                                        @if ($data->status == 'on')
+                                        <span class="badge badge-primary">{{ strtoupper($data->status) }}</span>
+                                        @else
+                                        <span class="badge badge-success">{{ strtoupper($data->status) }}</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         <a href="{{ route('kecelakaan.edit', $data->id) }}"
                                             class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
@@ -147,6 +157,12 @@
                                             onclick="deleteThisKecelakaan({{ $data }})"><i
                                                 class="fa fa-trash"></i>
                                         </button>
+                                       
+                                        @if ($data->status == 'on')
+                                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#statusConfirmOff" onclick="statusOffData({{$data}})"><i class="fas fa-user-shield"></i> OFF</button>
+                                        @else
+                                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#statusConfirmOn" onclick="statusOnData({{$data}})"><i class="fas fa-car-crash"></i> ON</button>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
@@ -200,6 +216,56 @@
         </div>
     </div>
 
+    <div class="modal fade" tabindex="-1" role="dialog" id="statusConfirmOn">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Status Kecelakaan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('kecelakaan.status', '') }}" method="post" style="display: inline-block" id="statusOnForm">
+                    @csrf
+                    <input type="hidden" name="status" value="on">
+                    
+                    <div class="modal-body">
+                        Apakah anda yakin untuk <b>mengubah</b> status kecelakaan ini menjadi <b>ON</b>?
+                    </div>
+                    <div class="modal-footer bg-whitesmoke br">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
+                        <button type="submit" class="btn btn-primary">Ya, Ubah</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="statusConfirmOff">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Status Kelecalakaan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('kecelakaan.status', '') }}" method="post" style="display: inline-block" id="statusOffForm">
+                    @csrf
+                    <input type="hidden" name="status" value="off">
+                    
+                    <div class="modal-body">
+                        Apakah anda yakin untuk <b>mengubah</b> status kecelakaan ini menjadi <b>OFF</b>?
+                    </div>
+                    <div class="modal-footer bg-whitesmoke br">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
+                        <button type="submit" class="btn btn-primary">Ya, Ubah</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
     <div class="modal fade" tabindex="-1" role="dialog" id="deleteConfirm">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -283,6 +349,19 @@
             $(this).attr('disabled', true);
             $("#destroyAllForm").submit();
         });
+
+        const statusOnFormConst = $("#statusOnForm").attr('action');
+
+        function statusOnData(data) {
+            $("#statusOnForm").attr('action', `${statusOnFormConst}/${data.id}`);
+        }
+
+        const statusOffFormConst = $("#statusOffForm").attr('action');
+
+        function statusOffData(data) {
+            $("#statusOffForm").attr('action', `${statusOffFormConst}/${data.id}`);
+        }
+
 
         const deleteKecelakaan = $("#deleteKecelakaanForm").attr('action');
 

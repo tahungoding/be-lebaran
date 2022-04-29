@@ -113,12 +113,20 @@
                         @csrf
                         @method('put')
                         <div class="row">
-                            <div class="form-group col-md-6 col-12">
+                            <div class="form-group col-md-4 col-12">
                                 <label>Lokasi</label>
                                 <input type="text" class="form-control" name="edit_lokasi" placeholder="Lokasi"
                                     value="{{ $kecelakaan->lokasi }}">
                             </div>
-                            <div class="form-group col-md-6 col-12">
+                            <div class="form-group col-md-4 col-12">
+                                <label>Pos</label>
+                                <select name="edit_nama_pos" class="form-control">
+                                    @foreach($pos as $posData)
+                                        <option value="{{ $posData->nama }}" {{ $kecelakaan->nama_pos == $posData->nama ? 'selected' : null }}>{{ $posData->nama }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4 col-12">
                                 <label>Waktu</label>
                                 <input type="time" name="edit_waktu" class="form-control"
                                     value="{{ $kecelakaan->waktu }}">
@@ -138,8 +146,9 @@
                             <div class="form-group col-md-12 col-12">
                                 <label>Upload Gambar (optional)</label>
                                 <input type="file" class="form-control dropify" name="edit_file_pendukung" id="edit_file_pendukung"
-                                    data-allowed-file-extensions="png jpg jpeg" data-show-remove="false" data-default-file="{{ asset('images/kecelakaan/'. $kecelakaan->file_pendukung) }}">
+                                    data-allowed-file-extensions="png jpg jpeg" data-show-remove="false" data-default-file="{{ Storage::url($kecelakaan->file_pendukung) }}">
                             </div>
+                            
                             <div class="form-group col-md-12 col-12">
                                 <label>Map</label>
                                 <div id="map"></div>
@@ -191,6 +200,9 @@
                     edit_ringkas_kejadian: {
                         required: true,
                     },
+                    edit_nama_pos: {
+                        required: true,
+                    },
                     edit_detail_kejadian: {
                         required: true,
                     },
@@ -210,6 +222,9 @@
                     },
                     edit_ringkas_kejadian: {
                         required: "Ringkasan Kejadian harus di isi",
+                    },
+                    edit_nama_pos: {
+                        required: "Nama Pos harus di isi",
                     },
                     edit_detail_kejadian: {
                         required: "Detail Kejadian harus di isi",

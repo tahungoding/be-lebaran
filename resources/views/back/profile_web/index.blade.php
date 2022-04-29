@@ -188,8 +188,7 @@
                 <div class="col-sm">
                   <label for="logo">Logo</label>
                   <input type="file" class="form-control dropify" name="edit_logo" id="edit_logo"
-                    data-allowed-file-extensions="png jpg jpeg" data-show-remove="false" data-default-file="@if(!empty($webs->logo) &&
-                    file_exists(public_path('images/user/'. $webs->logo))){{ asset('images/user/'. $webs->logo) }}@endif">
+                    data-allowed-file-extensions="png jpg jpeg" data-show-remove="false" data-default-file="@if(Storage::exists($webs->logo) && !empty($webs->logo)){{ Storage::exists($webs->logo) }} @endif">
                   <small>Format <b>png,jpg,jpeg</b> (1MB max)</small>
                   <br>
                   <label for="edit_logo" generated="true" class="error" style="display: none;"></label>

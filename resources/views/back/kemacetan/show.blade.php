@@ -30,8 +30,10 @@
     <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.9/dist/esri-leaflet-geocoder.js"
         integrity="sha512-QXchymy6PyEfYFQeOUuoz5pH5q9ng0eewZN8Sv0wvxq3ZhujTGF4eS/ySpnl6YfTQRWmA2Nn3Bezi9xuF8yNiw=="
         crossorigin=""></script>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.10.3/simple-lightbox.min.css" integrity="sha512-Ne9/ZPNVK3w3pBBX6xE86bNG295dJl4CHttrCp3WmxO+8NQ2Vn8FltNr6UsysA1vm7NE6hfCszbXe3D6FUNFsA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.10.3/simple-lightbox.min.css"
+        integrity="sha512-Ne9/ZPNVK3w3pBBX6xE86bNG295dJl4CHttrCp3WmxO+8NQ2Vn8FltNr6UsysA1vm7NE6hfCszbXe3D6FUNFsA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
         .dropify-wrapper {
@@ -111,42 +113,60 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="form-group col-md-6 col-12">
+                        <div class="form-group col-md-4 col-12">
                             <label>Lokasi</label>
-                            <input type="text" class="form-control" name="edit_lokasi" placeholder="Lokasi" value="{{ $kemacetan->lokasi }}" readonly>
+                            <input type="text" class="form-control" name="edit_lokasi" placeholder="Lokasi"
+                                value="{{ $kemacetan->lokasi }}" readonly>
                         </div>
-                        <div class="form-group col-md-6 col-12">
+                        <div class="form-group col-md-4 col-12">
+                            <label>Pos</label>
+                            <select class="form-control">
+                                @foreach($pos as $posData)
+                                    <option value="{{ $posData->nama }}" {{ $posData->nama == $kemacetan->nama_pos ? 'selected' : null }}>{{ $posData->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4 col-12">
                             <label>Waktu</label>
-                            <input type="time" name="edit_waktu" class="form-control" value="{{ $kemacetan->waktu }}" readonly>
+                            <input type="time" name="edit_waktu" class="form-control" value="{{ $kemacetan->waktu }}"
+                                readonly>
                         </div>
                     </div>
                     <div class="row">
                         <div class="form-group col-md-12 col-12">
                             <label>Ringkasan Kejadian</label>
-                            <textarea name="edit_ringkas_kejadian" class="form-control" style="height: 30vh;" readonly>{{ $kemacetan->ringkas_kejadian }}</textarea>
+                            <textarea name="edit_ringkas_kejadian" class="form-control" style="height: 30vh;"
+                                readonly>{{ $kemacetan->ringkas_kejadian }}</textarea>
                         </div>
                         <div class="form-group col-md-12 col-12">
                             <label>Detail Kejadian</label>
-                            <textarea name="edit_detail_kejadian" class="form-control my-editor" id="my-editor" style="height: 30vh;" readonly>{{ $kemacetan->detail_kejadian }}</textarea>
+                            <textarea name="edit_detail_kejadian" class="form-control my-editor" id="my-editor" style="height: 30vh;"
+                                readonly>{{ $kemacetan->detail_kejadian }}</textarea>
                         </div>
                         <div class="form-group col-md-12 col-12">
                             <label>Upload Gambar (optional)</label>
                             <div class="gallery" style="overflow: hidden;">
-                                @if(!empty($kemacetan->file_pendukung) && file_exists(public_path('images/kemacetan/'. $kemacetan->file_pendukung)))
-                                <a href="{{ asset('images/kemacetan/'. $kemacetan->file_pendukung) }}"><img src="{{ asset('images/kemacetan/'. $kemacetan->file_pendukung) }}" style="width: 150px; height: 150px; object-fit: cover;"/></a>
+                                @if (Storage::exists($kemacetan->file_pendukung) && !empty($kemacetan->file_pendukung))
+                                    <a href="{{ Storage::url($kemacetan->file_pendukung) }}"><img
+                                            src="{{ Storage::url($kemacetan->file_pendukung) }}"
+                                            style="width: 150px; height: 150px; object-fit: cover;" /></a>
                                 @endif
-                            </div>                        </div>
+                            </div>
+                        </div>
+                       
                         <div class="form-group col-md-12 col-12">
                             <label>Map</label>
                             <div id="map"></div>
                         </div>
                         <div class="form-group col-md-6 col-12">
                             <label>Latitiude</label>
-                            <input type="text" name="edit_latitude" id="latitude" class="form-control" value="{{ $kemacetan->latitude }}" readonly>
+                            <input type="text" name="edit_latitude" id="latitude" class="form-control"
+                                value="{{ $kemacetan->latitude }}" readonly>
                         </div>
                         <div class="form-group col-md-6 col-12">
                             <label>Longitude</label>
-                            <input type="text" name="edit_longitude" id="longitude" class="form-control" value="{{ $kemacetan->longitude }}" readonly>
+                            <input type="text" name="edit_longitude" id="longitude" class="form-control"
+                                value="{{ $kemacetan->longitude }}" readonly>
                         </div>
                     </div>
                     <div class="card-footer text-right">
@@ -167,14 +187,17 @@
     <script src="https://cdn.datatables.net/fixedheader/3.1.9/js/dataTables.fixedHeader.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.10.3/simple-lightbox.min.js" integrity="sha512-XGiM73niqHXRwBELBEktUKuGXC9yHyaxEsVWvUiCph8yxkaNkGeXJnqs5Ls1RSp4Q+PITMcCy2Dw7HxkzBWQCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.10.3/simple-lightbox.min.js"
+        integrity="sha512-XGiM73niqHXRwBELBEktUKuGXC9yHyaxEsVWvUiCph8yxkaNkGeXJnqs5Ls1RSp4Q+PITMcCy2Dw7HxkzBWQCw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-<script>
-    $('.dropify').dropify();
-</script>
-<script>
-    var lightbox = new SimpleLightbox('.gallery a', { /* options */ });
-</script>
+    <script>
+        $('.dropify').dropify();
+    </script>
+    <script>
+        var lightbox = new SimpleLightbox('.gallery a', {
+            /* options */ });
+    </script>
     <script type="text/javascript">
         // Initialize the map and assign it to a variable for later use
         var map = L.map('map', {
@@ -185,7 +208,7 @@
         });
         L.control.scale().addTo(map);
         var marker;
-        var marker = L.marker([{{ $kemacetan->latitude }},{{ $kemacetan->longitude }}]).addTo(map);
+        var marker = L.marker([{{ $kemacetan->latitude }}, {{ $kemacetan->longitude }}]).addTo(map);
 
         // Create a Tile Layer and add it to the map
         //var tiles = new L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.png').addTo(map);

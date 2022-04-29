@@ -120,7 +120,7 @@
                             <label>Pos</label>
                             <select name="edit_pos_id" class="form-control">
                                 @foreach($pos as $posData)
-                                <option value="{{ $posData->id }}" {{ $posData->id == $pos_gatur->pos_id ? 'checked' : null }}>{{ $posData->nama }}</option>
+                                <option value="{{ $posData->id }}" {{ $posData->id == $pos_gatur->pos_id ? 'selected' : null }}>{{ $posData->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
