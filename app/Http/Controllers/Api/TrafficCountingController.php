@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Kemacetan;
+use App\Models\TrafficCounting;
 
-class KemacetanController extends Controller
+class TrafficCountingController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +15,7 @@ class KemacetanController extends Controller
      */
     public function index()
     {
-        $data = Kemacetan::where('status', '=', 'on')->get();
+        $data = TrafficCounting::where('status', '=', 'on')->get();
 
         return response()->json($data, 200);
     }
@@ -49,7 +49,7 @@ class KemacetanController extends Controller
      */
     public function show($id)
     {
-        $data = Kemacetan::findOrFail($id);
+        $data = TrafficCounting::findOrFail($id);
 
         return response()->json($data, 200);
     }

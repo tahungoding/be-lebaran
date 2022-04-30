@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Back\ProfileWebController;
 use App\Http\Controllers\Back\PosController;
 use App\Http\Controllers\Back\PosGaturController;
+use App\Http\Controllers\Back\TrafficCountingController;
 use App\Http\Controllers\Back\KemacetanController;
 use App\Http\Controllers\Back\KecelakaanController;
 use App\Http\Controllers\Back\ManajemenUserController;
@@ -53,6 +54,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
     Route::post('pos-gatur/check-pos-gatur-name', [PosGaturController::class, 'checkPosGaturName'])->name('checkPosGaturName');
     // Route::post('testimony/search-testimony', [TestimonyController::class, 'testimonySearch'])->name('testimonySearch');
     // Route::post('testimony/pagination', [TestimonyController::class, 'testimonyPagination'])->name('testimonyPagination');
+    Route::resource('traffic-counting', TrafficCountingController::class);
+    Route::post('traffic-counting/status/{id}', [TrafficCountingController::class,'status'])->name('traffic-counting.status');
 
     Route::resource('kemacetan', KemacetanController::class);
     Route::post('kemacetan/status/{id}', [KemacetanController::class,'status'])->name('kemacetan.status');
