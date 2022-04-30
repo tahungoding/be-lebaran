@@ -1,5 +1,5 @@
 @extends('layouts.main', ['web' => $web])
-@section('title', 'Kecelakaan')
+@section('title', 'Traffic Counting')
 @section('css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css"
@@ -16,7 +16,6 @@
         integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
         crossorigin=""></script>
 
-
     <!-- Load Esri Leaflet from CDN -->
     <script src="https://unpkg.com/esri-leaflet@2.1.4/dist/esri-leaflet.js"
         integrity="sha512-m+BZ3OSlzGdYLqUBZt3u6eA0sH+Txdmq7cqA1u8/B2aTXviGMMLOfrKyiIW7181jbzZAY0u+3jWoiL61iLcTKQ=="
@@ -31,6 +30,10 @@
         integrity="sha512-QXchymy6PyEfYFQeOUuoz5pH5q9ng0eewZN8Sv0wvxq3ZhujTGF4eS/ySpnl6YfTQRWmA2Nn3Bezi9xuF8yNiw=="
         crossorigin=""></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.10.3/simple-lightbox.min.css"
+        integrity="sha512-Ne9/ZPNVK3w3pBBX6xE86bNG295dJl4CHttrCp3WmxO+8NQ2Vn8FltNr6UsysA1vm7NE6hfCszbXe3D6FUNFsA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        
     <style>
         .dropify-wrapper {
             border: 1px solid #e2e7f1;
@@ -38,30 +41,9 @@
             height: 150px;
         }
 
-        #map {
-            height: 300px
-        }
-
         .card {
             border-radius: 10px;
         }
-
-        #map-edit {
-            height: 300px
-        }
-
-        .card {
-            border-radius: 10px;
-        }
-
-        #map-detail {
-            height: 300px
-        }
-
-        .card {
-            border-radius: 10px;
-        }
-
 
         label.error {
             color: #f1556c;
@@ -91,22 +73,16 @@
                 display: block !important;
             }
         }
-        .inbtn{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 35px;
-    height: 35px;    
-}
+
     </style>
 @endsection
 @section('container')
     <section class="section">
         <div class="section-header">
-            <h1>Kecelakaan</h1>
+            <h1>Traffic Counting</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('dashboard.index') }}">Dashboard</a></div>
-                <div class="breadcrumb-item">Kecelakaan</div>
+                <div class="breadcrumb-item">Traffic Counting</div>
             </div>
         </div>
 
@@ -116,176 +92,91 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex justify-content-between w-100">
-                                <ul class="nav nav-pills" id="pills-tab" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link active" id="kecelakaan-todays-data-tab" data-toggle="pill"
-                                            href="#kecelakaan-todays-data" role="tab" aria-controls="kecelakaan-todays-data"
-                                            aria-selected="true">Data Hari Ini</a>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="kecelakaan-semua-data-tab" data-toggle="pill" href="#kecelakaan-semua-data" role="tab"
-                                            aria-controls="kecelakaan-semua-data" aria-selected="false">Semua</a>
-                                    </li>
-                                </ul>
-                                <a class="btn btn-sm btn-primary" href="{{ route('kecelakaan.create') }}"><i
-                                        class="fas fa-plus-circle inbtn"></i></button></a>
+                                <a href="{{ route('traffic-counting.create') }}" class="btn btn-sm btn-primary"><i
+                                        class="fas fa-plus-circle"></i></a></a>
                             </div>
                         </div>
                     </div>
 
                 </div>
             </div>
-            <div class="tab-content" id="pills-tabContent">
-                <div class="tab-pane fade show active" id="kecelakaan-todays-data" role="tabpanel"
-                    aria-labelledby="kecelakaan-todays-data-tab">
-                    <div class="card">
-                        <div class="card-body">
-                            <table id="kecelakaan_table_today" class="table table-striped table-bordered dt-responsive nowrap"
-                                style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Lokasi</th>
-                                        <th>Detail</th>
-                                        <th>Status</th>
-                                        <th>Tanggal</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                @php
-                                    $increment = 1;
-                                @endphp
-                                <tbody>
-                                    @foreach ($kecelakaan_today as $data)
-                                        <tr>
-                                            <td>{{ $increment++ }}</td>
-                                            <td>{{ $data->lokasi }}</td>
-                                            <td><a href="{{ route('kecelakaan.show', $data->id) }}"><i class="fas fa-eye"></i></a></td>
-                                            <td>
-                                                @if ($data->status == 'on')
-                                                <span class="badge badge-primary">{{ strtoupper($data->status) }}</span>
-                                                @else
-                                                <span class="badge badge-success">{{ strtoupper($data->status) }}</span>
-                                                @endif
-                                            </td>
-                                            <td>{{ $data->created_at }}</td>
-                                            <td>
-                                                <a href="{{ route('kecelakaan.edit', $data->id) }}"
-                                                    class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
-                                                <button type="button" data-toggle="modal" data-target="#deleteConfirm"
-                                                    class="btn btn-sm btn-danger"
-                                                    onclick="deleteThisKemacetan({{ $data }})"><i
-                                                        class="fa fa-trash"></i>
-                                                </button>
-        
-                                                
-                                                @if ($data->status == 'on')
-                                                <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#statusConfirmOff" onclick="statusOffData({{$data}})"><i class="fas fa-user-shield"></i> OFF</button>
-                                                @else
-                                                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#statusConfirmOn" onclick="statusOnData({{$data}})"><i class="fas fa-car-crash"></i> ON</button>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+            <div class="card">
+                <div class="card-body">
+                    <table id="traffic_counting_table" class="table table-striped table-bordered dt-responsive nowrap"
+                        style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Gambar</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        @php
+                            $increment = 1;
+                        @endphp
+                        <tbody>
+                            @foreach ($traffic_counting as $data)
+                                <tr>
+                                    <td>{{ $increment++ }}</td>
+                                    <td>
+                                        <div class="gallery" style="overflow: hidden;">
+                                            <a href="{{ $data->gambar }}"><img src="{{ $data->gambar }}"
+                                            style="width: 100px; height: 100px; object-fit: cover;" /></a>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if ($data->status == 'on')
+                                        <span class="badge badge-primary">{{ strtoupper($data->status) }}</span>
+                                        @else
+                                        <span class="badge badge-success">{{ strtoupper($data->status) }}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('traffic-counting.edit', $data->id) }}"
+                                            class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
+                                        <button type="button" data-toggle="modal" data-target="#deleteConfirm"
+                                            class="btn btn-sm btn-danger"
+                                            onclick="deleteThisTrafficCounting({{ $data }})"><i
+                                                class="fa fa-trash"></i>
+                                        </button>
+                                        @if ($data->status == 'on')
+                                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#statusConfirmOff" onclick="statusOffData({{$data}})"><i class="fas fa-toggle-off"></i> OFF</button>
+                                        @else
+                                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#statusConfirmOn" onclick="statusOnData({{$data}})"><i class="fas fa-toggle-on"></i> ON</button>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-                <div class="tab-pane fade" id="kecelakaan-semua-data" role="tabpanel" aria-labelledby="kecelakaan-semua-data-tab">
-                    <div class="card">
-                        <div class="card-body">
-                            <table id="kecelakaan_table_all" class="table table-striped table-bordered dt-responsive nowrap"
-                                style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Lokasi</th>
-                                        <th>Detail</th>
-                                        <th>Status</th>
-                                        <th>Tanggal</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                @php
-                                    $increment = 1;
-                                @endphp
-                                <tbody>
-                                    @foreach ($kecelakaan_all as $data)
-                                        <tr>
-                                            <td>{{ $increment++ }}</td>
-                                            <td>{{ $data->lokasi }}</td>
-                                            <td><a href="{{ route('kecelakaan.show', $data->id) }}"><i class="fas fa-eye"></i></a></td>
-                                            <td>
-                                                @if ($data->status == 'on')
-                                                <span class="badge badge-primary">{{ strtoupper($data->status) }}</span>
-                                                @else
-                                                <span class="badge badge-success">{{ strtoupper($data->status) }}</span>
-                                                @endif
-                                            </td>
-                                            <td>{{ $data->created_at }}</td>
-                                            <td>
-                                                <a href="{{ route('kecelakaan.edit', $data->id) }}"
-                                                    class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
-                                                <button type="button" data-toggle="modal" data-target="#deleteConfirm"
-                                                    class="btn btn-sm btn-danger"
-                                                    onclick="deleteThisKemacetan({{ $data }})"><i
-                                                        class="fa fa-trash"></i>
-                                                </button>
-        
-                                                
-                                                @if ($data->status == 'on')
-                                                <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#statusConfirmOff" onclick="statusOffData({{$data}})"><i class="fas fa-user-shield"></i> OFF</button>
-                                                @else
-                                                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#statusConfirmOn" onclick="statusOnData({{$data}})"><i class="fas fa-car-crash"></i> ON</button>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                
             </div>
         </div>
     </section>
 
-    <div class="modal fade" tabindex="-1" role="dialog" id="detailKecelakaan">
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="detailTrafficCounting">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Detail Kecelakaan</h5>
+                    <h5 class="modal-title">Detail Traffic Counting</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="lokasi">Lokasi</label>
-                        <input type="text" class="form-control" id="detail_lokasi" placeholder="Lokasi" readonly>
+                        <label for="lokasi">Keterangan</label>
+                        <input type="text" class="form-control" id="keterangan" readonly>
                     </div>
-                    <div class="form-group">
-                        <label for="ringkas_kejadian">Ringkasan Kejadian</label>
-                        <textarea class="form-control" readonly style="height: 20vh;" id="detail_ringkas_kejadian"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="detail_kejadian">Detail Kejadian</label>
-                        <textarea class="form-control my-editor-detail" id="my-editor-detail" readonly style="height: 30vh;"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="waktu">Waktu</label>
-                        <input type="time" class="form-control" id="detail_waktu" readonly>
-                    </div>
-                    <div id="map"></div>
-                    <div class="form-group">
-                        <label for="latitude">Latitude</label>
-                        <input type="text" class="form-control" id="detail_latitude" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="longitude">Longitude</label>
-                        <input type="text" class="form-control" id="detail_longitude" readonly>
+                    <div class="form-group col-md-12 col-12">
+                        <label>Gambar</label>
+                        <div class="gallery" style="overflow: hidden;">
+                                <a href="" id="gambar">
+                                    <img src="" id="gambarSrc" style="width: 150px; height: 150px; object-fit: cover;" />
+                                </a>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer bg-whitesmoke br">
@@ -299,17 +190,17 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Status Kecelakaan</h5>
+                    <h5 class="modal-title">Status Traffic Counting</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('kecelakaan.status', '') }}" method="post" style="display: inline-block" id="statusOnForm">
+                <form action="{{ route('traffic-counting.status', '') }}" method="post" style="display: inline-block" id="statusOnForm">
                     @csrf
                     <input type="hidden" name="status" value="on">
                     
                     <div class="modal-body">
-                        Apakah anda yakin untuk <b>mengubah</b> status kecelakaan ini menjadi <b>ON</b>?
+                        Apakah anda yakin untuk <b>mengubah</b> status traffic counting ini menjadi <b>ON</b>?
                     </div>
                     <div class="modal-footer bg-whitesmoke br">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
@@ -324,17 +215,17 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Status Kelecalakaan</h5>
+                    <h5 class="modal-title">Status Traffic Counting</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('kecelakaan.status', '') }}" method="post" style="display: inline-block" id="statusOffForm">
+                <form action="{{ route('traffic-counting.status', '') }}" method="post" style="display: inline-block" id="statusOffForm">
                     @csrf
                     <input type="hidden" name="status" value="off">
                     
                     <div class="modal-body">
-                        Apakah anda yakin untuk <b>mengubah</b> status kecelakaan ini menjadi <b>OFF</b>?
+                        Apakah anda yakin untuk <b>mengubah</b> status traffic counting ini menjadi <b>OFF</b>?
                     </div>
                     <div class="modal-footer bg-whitesmoke br">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
@@ -345,6 +236,7 @@
         </div>
     </div>
 
+
     <div class="modal fade" tabindex="-1" role="dialog" id="deleteConfirm">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -354,11 +246,11 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('kecelakaan.destroy', '') }}" method="post" id="deleteKecelakaanForm">
+                <form action="{{ route('traffic-counting.destroy', '') }}" method="post" id="deleteTrafficCountingForm">
                     @csrf
                     @method('delete')
                     <div class="modal-body">
-                        Apakah anda yakin untuk <b>menghapus</b> data kecelakaan ini ?
+                        Apakah anda yakin untuk <b>menghapus</b> data traffic counting ini ?
                     </div>
                     <div class="modal-footer bg-whitesmoke br">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
@@ -400,30 +292,34 @@
     <script src="https://cdn.datatables.net/fixedheader/3.1.9/js/dataTables.fixedHeader.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.10.3/simple-lightbox.min.js"
+    integrity="sha512-XGiM73niqHXRwBELBEktUKuGXC9yHyaxEsVWvUiCph8yxkaNkGeXJnqs5Ls1RSp4Q+PITMcCy2Dw7HxkzBWQCw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
         $(document).ready(function() {
-            $('#kecelakaan_table_today').DataTable();
-            $('#kecelakaan_table_all').DataTable();
+            $('#traffic_counting_table').DataTable();
         });
     </script>
+    {{-- Keep tab active on reload --}}
+<script>
+    $(document).ready(function(){
+    $('a[data-toggle="pill"]').on('show.bs.tab', function(e) {
+        localStorage.setItem('activeTab', $(e.target).attr('href'));
+    });
+    var activeTab = localStorage.getItem('activeTab');
+    if(activeTab){
+        $('#pills-tab a[href="' + activeTab + '"]').tab('show');
+    }
+});
+</script>
     <script>
         $('.dropify').dropify();
     </script>
-
-{{-- Keep tab active on reload --}}
 <script>
-    $(document).ready(function() {
-        $('a[data-toggle="pill"]').on('show.bs.tab', function(e) {
-            localStorage.setItem('activeTab', $(e.target).attr('href'));
-        });
-        var activeTab = localStorage.getItem('activeTab');
-        if (activeTab) {
-            $('#pills-tab a[href="' + activeTab + '"]').tab('show');
-        }
-    });
+    var lightbox = new SimpleLightbox('.gallery a', {
+        /* options */ });
 </script>
-
     <script>
         function setDetailData(data) {
 
@@ -441,6 +337,12 @@
             $("#destroyAllForm").submit();
         });
 
+        const deleteTrafficCounting = $("#deleteTrafficCountingForm").attr('action');
+
+        function deleteThisTrafficCounting(data) {
+            $("#deleteTrafficCountingForm").attr('action', `${deleteTrafficCounting}/${data.id}`);
+        }
+
         const statusOnFormConst = $("#statusOnForm").attr('action');
 
         function statusOnData(data) {
@@ -454,14 +356,9 @@
         }
 
 
-        const deleteKecelakaan = $("#deleteKecelakaanForm").attr('action');
-
-        function deleteThisKecelakaan(data) {
-            $("#deleteKecelakaanForm").attr('action', `${deleteKecelakaan}/${data.id}`);
-        }
-
         $("#deleteAllButton").attr('disabled', true);
     </script>
+
     <script src="//cdn.ckeditor.com/4.6.2/standard/ckeditor.js"></script>
     <script>
         var options = {
@@ -477,17 +374,31 @@
 
     <script type="text/javascript">
         // Initialize the map and assign it to a variable for later use
+        var map;
+        console.log(map); // should output the object that represents instance of Leaflet
+
+        
+
         function mapDetail(data) {
-            var map = L.map('map', {
+            var dataLatitude = [data.latitude];
+            var dataLongitude = [data.longitude];
+
+            console.log(dataLatitude[0]);
+            console.log(dataLongitude[0]);
+            console.log(data.id);
+
+           
+            var map = L.map(`map-detail`, {
                 // Set latitude and longitude of the map center (required)
-                center: [data.latitude, data.longitude],
+                center: [-6.8578387, 107.9210544],
                 // Set the initial zoom level, values 0-18, where 0 is most zoomed-out (required)
                 zoom: 15
             });
             L.control.scale().addTo(map);
 
             var marker;
-            var marker = L.marker([data.latitude, data.longitude]).addTo(map);
+            var marker = L.marker(-6.8578387, 107.9210544]).addTo(map);
+
 
             // Create a Tile Layer and add it to the map
             //var tiles = new L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.png').addTo(map);
@@ -522,12 +433,17 @@
                 }
             });
 
-            var modal = $("#detailKecelakaan");
+            var modal = $("#detailKemacetan");
             modal.on('shown.bs.modal', function() {
                 setTimeout(function() {
                     map.invalidateSize();
                 }, 1);
 
+            })
+
+            $('#myModal').on('hidden.bs.modal', function() {
+                var dataLatitude = '';
+                var dataLongitude = '';
             })
         }
 
@@ -535,8 +451,22 @@
             $('.pointer').fadeOut('slow');
         }, 3400);
     </script>
+    <script>
+        var x = document.getElementById("demo");
 
-    {{-- FIX Leaflet modal problem --}}
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        function showPosition(position) {
+            $('#latitude').val(position.coords.latitude)
+            $('#longitude').val(position.coords.longitude)
+        }
+    </script>
 
     <script>
         var x = document.getElementById("editDemo");

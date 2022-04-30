@@ -118,6 +118,12 @@
                                 </a>
                             </div>
                             <div class="search-item">
+                                <a href="{{ route('traffic-counting.index') }}" style="color: #78828a;">
+                                    <i class="fas fa-cars mr-1" style="width: 30px"></i>
+                                    Traffic Counting
+                                </a>
+                            </div>
+                            <div class="search-item">
                                 <a href="{{ route('kemacetan.index') }}" style="color: #78828a;">
                                     <i class="fas fa-traffic-light mr-1" style="width: 30px"></i>
                                     Kemacetan
@@ -138,13 +144,13 @@
                         </div>
                     </div>
                 </form>
-                
+
                 <ul class="navbar-nav navbar-right">
                     <li class="dropdown"><a href="#" data-toggle="dropdown"
                             class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                             <div class="image-container">
                                 <img alt="image"
-                                    src="@if(!empty(Auth::user()->photo) && Auth::user()->photo) {{ Auth::user()->photo }} @else {{ asset('assets/img/avatar/avatar-1.png') }} @endif"
+                                    src="@if (!empty(Auth::user()->photo) && Auth::user()->photo) {{ Auth::user()->photo }} @else {{ asset('assets/img/avatar/avatar-1.png') }} @endif"
                                     style="object-fit: cover !important;" class="mr-1">
                             </div>
                             <div class="d-sm-none d-lg-inline-block">{{ Auth::user()->fullname }}</div>
@@ -167,9 +173,9 @@
                 <aside id="sidebar-wrapper">
                     <div class="sidebar-brand">
                         @foreach ($web as $webs)
-                            @if(!empty($webs->logo) && $webs->logo)
-                                <img alt="image" src="{{ $webs->logo }}" class="img-fluid mr-5 mt-4"
-                                style="width:150px;">
+                            @if (!empty($webs->logo) && $webs->logo)
+                                <img alt="image" src="{{ $webs->logo }}" class="img-fluid p-2 mr-5 mt-1"
+                                    style="width:150px;">
                             @else
                                 <a href="{{ route('dashboard.index') }}">{{ $webs->name }}</a>
                             @endif
@@ -200,12 +206,20 @@
                                     @if ((request()->routeIs('pos-gatur.index') && isset($primary_color)) || request()->routeIs('pos-gatur.create') || request()->routeIs('pos-gatur.edit')) style="color: {{ $primary_color }};" @endif
                                     href="{{ route('pos-gatur.index') }}"><i class="fas fa-road"></i> <span>Pos
                                         Gatur</span></a></li>
+                            <li class="{{ request()->routeIs('traffic-counting.index')  ? 'active' : '' }}">
+                                <a class="nav-link"
+                                    @if (request()->routeIs('traffic-counting.index') || request()->routeIs('traffic-counting.create') || request()->routeIs('traffic-counting.edit')) style="color: {{ $primary_color }};" @endif
+                                    href="{{ route('traffic-counting.index') }}"><i class="fas fa-car-side"></i>
+                                    <span>Traffic Couting</span>
+                                </a>
+                            </li>
                             <li
                                 class="{{ request()->routeIs('kecelakaan.index') ||request()->routeIs('kecelakaan.create') ||request()->routeIs('kecelakaan.edit')? 'active': '' }}">
                                 <a class="nav-link"
                                     @if ((request()->routeIs('kecelakaan.index') && isset($primary_color)) || request()->routeIs('kecelakaan.create') || request()->routeIs('kecelakaan.edit') || request()->routeIs('kecelakaan.show')) style="color: {{ $primary_color }};" @endif
                                     href="{{ route('kecelakaan.index') }}"><i class="fas fa-car-crash"></i>
-                                    <span>Kecelakaan</span></a></li>
+                                    <span>Kecelakaan</span></a>
+                            </li>
                             <li class="{{ request()->routeIs('kemacetan.index') ? 'active' : '' }}"><a
                                     class="nav-link"
                                     @if ((request()->routeIs('kemacetan.index') && isset($primary_color)) || request()->routeIs('kemacetan.create') || request()->routeIs('kemacetan.edit') || request()->routeIs('kemacetan.show')) style="color: {{ $primary_color }};" @endif

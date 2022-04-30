@@ -23,9 +23,14 @@ class KecelakaanController extends Controller
      */
     public function index()
     {
-        $data['kecelakaan'] = Kecelakaan::when(Auth::user()->role == 'pos', function ($query) {
+        $data['kecelakaan_today'] = Kecelakaan::whereDate('created_at', Carbon::today())->when(Auth::user()->role == 'pos', function ($query) {
             $query->where('pos_id', Auth::user()->pos_id);
         })->get();
+
+        $data['kecelakaan_all'] = Kecelakaan::when(Auth::user()->role == 'pos', function ($query) {
+            $query->where('pos_id', Auth::user()->pos_id);
+        })->get();
+
         $data['web'] = Web::all();
         return view('back.kecelakaan.data', $data);
     }

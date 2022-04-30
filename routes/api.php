@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\KemacetanController;
 use App\Http\Controllers\Api\KecelakaanController;
 use App\Http\Controllers\Api\PosGaturController;
-
+use App\Http\Controllers\Api\TrafficCountingController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,3 +28,6 @@ Route::get('kecelakaan', [KecelakaanController::class, 'index']);
 Route::get('kecelakaan/detail/{id}', [KecelakaanController::class, 'show']);
 
 Route::get('pos-gatur', [PosGaturController::class, 'index']);
+
+Route::get('traffic-counting', [TrafficCountingController::class, 'index']);
+Route::get('traffic-counting/detail/{id}', [TrafficCountingController::class, 'show']);

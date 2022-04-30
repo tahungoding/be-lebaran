@@ -81,7 +81,13 @@
                 display: block !important;
             }
         }
-
+        .inbtn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;    
+}
     </style>
 @endsection
 @section('container')
@@ -100,66 +106,160 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex justify-content-between w-100">
+                                <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link active" id="kemacetan-todays-data-tab" data-toggle="pill"
+                                            href="#kemacetan-todays-data" role="tab" aria-controls="kemacetan-todays-data"
+                                            aria-selected="true">Data Hari Ini</a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link" id="kemacetan-semua-data-tab" data-toggle="pill"
+                                            href="#kemacetan-semua-data" role="tab" aria-controls="kemacetan-semua-data"
+                                            aria-selected="false">Semua</a>
+                                    </li>
+                                </ul>
                                 <a class="btn btn-sm btn-primary" href="{{ route('kemacetan.create') }}"><i
-                                        class="fas fa-plus-circle"></i></button></a>
+                                        class="fas fa-plus-circle inbtn"></i></button></a>
+                                
                             </div>
                         </div>
                     </div>
 
                 </div>
             </div>
-            <div class="card">
-                <div class="card-body">
-                    <table id="kemacetan_table" class="table table-striped table-bordered dt-responsive nowrap"
-                        style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Lokasi</th>
-                                <th>Detail</th>
-                                <th>Status</th>
-                                <th>Tanggal</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        @php
-                            $increment = 1;
-                        @endphp
-                        <tbody>
-                            @foreach ($kemacetan as $data)
-                                <tr>
-                                    <td>{{ $increment++ }}</td>
-                                    <td>{{ $data->lokasi }}</td>
-                                    <td><a href="{{ route('kemacetan.show', $data->id) }}"><i class="fas fa-eye"></i></a></td>
-                                    <td>
-                                        @if ($data->status == 'on')
-                                        <span class="badge badge-primary">{{ strtoupper($data->status) }}</span>
-                                        @else
-                                        <span class="badge badge-success">{{ strtoupper($data->status) }}</span>
-                                        @endif
-                                    </td>
-                                    <td>{{ $data->created_at }}</td>
-                                    <td>
-                                        <a href="{{ route('kemacetan.edit', $data->id) }}"
-                                            class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
-                                        <button type="button" data-toggle="modal" data-target="#deleteConfirm"
-                                            class="btn btn-sm btn-danger"
-                                            onclick="deleteThisKemacetan({{ $data }})"><i
-                                                class="fa fa-trash"></i>
-                                        </button>
+           
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="kemacetan-todays-data" role="tabpanel"
+                    aria-labelledby="kemacetan-todays-data-tab">
+                    <div class="card">
+                        <div class="card-body">
+                            <table id="kemacetan_table_today"
+                                class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Lokasi</th>
+                                        <th>Detail</th>
+                                        <th>Status</th>
+                                        <th>Tanggal</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                @php
+                                    $increment = 1;
+                                @endphp
+                                <tbody>
+                                    @foreach ($kemacetan_today as $data)
+                                        <tr>
+                                            <td>{{ $increment++ }}</td>
+                                            <td>{{ $data->lokasi }}</td>
+                                            <td><a href="{{ route('kemacetan.show', $data->id) }}"><i
+                                                        class="fas fa-eye"></i></a></td>
+                                            <td>
+                                                @if ($data->status == 'on')
+                                                    <span
+                                                        class="badge badge-primary">{{ strtoupper($data->status) }}</span>
+                                                @else
+                                                    <span
+                                                        class="badge badge-success">{{ strtoupper($data->status) }}</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $data->created_at }}</td>
+                                            <td>
+                                                <a href="{{ route('kemacetan.edit', $data->id) }}"
+                                                    class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
+                                                <button type="button" data-toggle="modal" data-target="#deleteConfirm"
+                                                    class="btn btn-sm btn-danger"
+                                                    onclick="deleteThisKemacetan({{ $data }})"><i
+                                                        class="fa fa-trash"></i>
+                                                </button>
 
-                                        
-                                        @if ($data->status == 'on')
-                                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#statusConfirmOff" onclick="statusOffData({{$data}})"><i class="fas fa-user-shield"></i> OFF</button>
-                                        @else
-                                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#statusConfirmOn" onclick="statusOnData({{$data}})"><i class="fas fa-car-crash"></i> ON</button>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+
+                                                @if ($data->status == 'on')
+                                                    <button type="button" class="btn btn-sm btn-success" data-toggle="modal"
+                                                        data-target="#statusConfirmOff"
+                                                        onclick="statusOffData({{ $data }})"><i
+                                                            class="fas fa-user-shield"></i> OFF</button>
+                                                @else
+                                                    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
+                                                        data-target="#statusConfirmOn"
+                                                        onclick="statusOnData({{ $data }})"><i
+                                                            class="fas fa-car-crash"></i> ON</button>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
+                <div class="tab-pane fade" id="kemacetan-semua-data" role="tabpanel"
+                    aria-labelledby="kemacetan-semua-data-tab">
+                    <div class="card">
+                        <div class="card-body">
+                            <table id="kemacetan_table_all" class="table table-striped table-bordered dt-responsive nowrap"
+                                style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Lokasi</th>
+                                        <th>Detail</th>
+                                        <th>Status</th>
+                                        <th>Tanggal</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                @php
+                                    $increment = 1;
+                                @endphp
+                                <tbody>
+                                    @foreach ($kemacetan_all as $data)
+                                        <tr>
+                                            <td>{{ $increment++ }}</td>
+                                            <td>{{ $data->lokasi }}</td>
+                                            <td><a href="{{ route('kemacetan.show', $data->id) }}"><i
+                                                        class="fas fa-eye"></i></a></td>
+                                            <td>
+                                                @if ($data->status == 'on')
+                                                    <span
+                                                        class="badge badge-primary">{{ strtoupper($data->status) }}</span>
+                                                @else
+                                                    <span
+                                                        class="badge badge-success">{{ strtoupper($data->status) }}</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $data->created_at }}</td>
+                                            <td>
+                                                <a href="{{ route('kemacetan.edit', $data->id) }}"
+                                                    class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
+                                                <button type="button" data-toggle="modal" data-target="#deleteConfirm"
+                                                    class="btn btn-sm btn-danger"
+                                                    onclick="deleteThisKemacetan({{ $data }})"><i
+                                                        class="fa fa-trash"></i>
+                                                </button>
+
+
+                                                @if ($data->status == 'on')
+                                                    <button type="button" class="btn btn-sm btn-success" data-toggle="modal"
+                                                        data-target="#statusConfirmOff"
+                                                        onclick="statusOffData({{ $data }})"><i
+                                                            class="fas fa-user-shield"></i> OFF</button>
+                                                @else
+                                                    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
+                                                        data-target="#statusConfirmOn"
+                                                        onclick="statusOnData({{ $data }})"><i
+                                                            class="fas fa-car-crash"></i> ON</button>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
@@ -216,10 +316,11 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('kemacetan.status', '') }}" method="post" style="display: inline-block" id="statusOnForm">
+                <form action="{{ route('kemacetan.status', '') }}" method="post" style="display: inline-block"
+                    id="statusOnForm">
                     @csrf
                     <input type="hidden" name="status" value="on">
-                    
+
                     <div class="modal-body">
                         Apakah anda yakin untuk <b>mengubah</b> status kemacetan ini menjadi <b>ON</b>?
                     </div>
@@ -241,10 +342,11 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('kemacetan.status', '') }}" method="post" style="display: inline-block" id="statusOffForm">
+                <form action="{{ route('kemacetan.status', '') }}" method="post" style="display: inline-block"
+                    id="statusOffForm">
                     @csrf
                     <input type="hidden" name="status" value="off">
-                    
+
                     <div class="modal-body">
                         Apakah anda yakin untuk <b>mengubah</b> status kemacetan ini menjadi <b>OFF</b>?
                     </div>
@@ -316,7 +418,20 @@
 
     <script>
         $(document).ready(function() {
-            $('#kemacetan_table').DataTable();
+            $('#kemacetan_table_today').DataTable();
+            $('#kemacetan_table_all').DataTable();
+        });
+    </script>
+    {{-- Keep tab active on reload --}}
+    <script>
+        $(document).ready(function() {
+            $('a[data-toggle="pill"]').on('show.bs.tab', function(e) {
+                localStorage.setItem('activeTab', $(e.target).attr('href'));
+            });
+            var activeTab = localStorage.getItem('activeTab');
+            if (activeTab) {
+                $('#pills-tab a[href="' + activeTab + '"]').tab('show');
+            }
         });
     </script>
     <script>
@@ -379,7 +494,7 @@
         var map;
         console.log(map); // should output the object that represents instance of Leaflet
 
-        
+
 
         function mapDetail(data) {
             var dataLatitude = [data.latitude];
@@ -389,7 +504,7 @@
             console.log(dataLongitude[0]);
             console.log(data.id);
 
-           
+
             var map = L.map(`map-detail`, {
                 // Set latitude and longitude of the map center (required)
                 center: [-6.8578387, 107.9210544],
@@ -402,51 +517,51 @@
             var marker = L.marker(-6.8578387, 107.9210544]).addTo(map);
 
 
-            // Create a Tile Layer and add it to the map
-            //var tiles = new L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.png').addTo(map);
-            L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+        // Create a Tile Layer and add it to the map
+        //var tiles = new L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.png').addTo(map);
+        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
-            // search for places via agol and our trailheads by name
-            var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider();
-            var searchControl = L.esri.Geocoding.geosearch({
-                providers: [
-                    arcgisOnline,
-                    L.esri.Geocoding.featureLayerProvider({
-                        url: 'https://services.arcgis.com/T4FFVOBhIY0maRRS/arcgis/rest/services/wenatchee_rec_sites/FeatureServer/4',
-                        searchFields: ['REC_NAME'],
-                        label: 'Trailheads',
-                        bufferRadius: 5000,
-                        formatSuggestion: function(feature) {
-                            return feature.properties.REC_NAME;
-                        }
-                    })
-                ],
-                useMapBounds: false,
-            }).addTo(map);
+        // search for places via agol and our trailheads by name
+        var arcgisOnline = L.esri.Geocoding.arcgisOnlineProvider();
+        var searchControl = L.esri.Geocoding.geosearch({
+            providers: [
+                arcgisOnline,
+                L.esri.Geocoding.featureLayerProvider({
+                    url: 'https://services.arcgis.com/T4FFVOBhIY0maRRS/arcgis/rest/services/wenatchee_rec_sites/FeatureServer/4',
+                    searchFields: ['REC_NAME'],
+                    label: 'Trailheads',
+                    bufferRadius: 5000,
+                    formatSuggestion: function(feature) {
+                        return feature.properties.REC_NAME;
+                    }
+                })
+            ],
+            useMapBounds: false,
+        }).addTo(map);
 
-            var results = new L.LayerGroup().addTo(map);
+        var results = new L.LayerGroup().addTo(map);
 
-            searchControl.on('results', function(data) {
-                results.clearLayers();
-                for (var i = data.results.length - 1; i >= 0; i--) {
-                    results.addLayer(L.marker(data.results[i].latlng));
-                }
-            });
+        searchControl.on('results', function(data) {
+            results.clearLayers();
+            for (var i = data.results.length - 1; i >= 0; i--) {
+                results.addLayer(L.marker(data.results[i].latlng));
+            }
+        });
 
-            var modal = $("#detailKemacetan");
-            modal.on('shown.bs.modal', function() {
-                setTimeout(function() {
-                    map.invalidateSize();
-                }, 1);
+        var modal = $("#detailKemacetan");
+        modal.on('shown.bs.modal', function() {
+            setTimeout(function() {
+                map.invalidateSize();
+            }, 1);
 
-            })
+        })
 
-            $('#myModal').on('hidden.bs.modal', function() {
-                var dataLatitude = '';
-                var dataLongitude = '';
-            })
+        $('#myModal').on('hidden.bs.modal', function() {
+            var dataLatitude = '';
+            var dataLongitude = '';
+        })
         }
 
         setTimeout(function() {
