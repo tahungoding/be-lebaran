@@ -108,7 +108,6 @@
                             <tr>
                                 <th>#</th>
                                 <th>Gambar</th>
-                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -125,26 +124,13 @@
                                             style="width: 100px; height: 100px; object-fit: cover;" /></a>
                                         </div>
                                     </td>
+                                   
                                     <td>
-                                        @if ($data->status == 'on')
-                                        <span class="badge badge-primary">{{ strtoupper($data->status) }}</span>
-                                        @else
-                                        <span class="badge badge-success">{{ strtoupper($data->status) }}</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('traffic-counting.edit', $data->id) }}"
-                                            class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
                                         <button type="button" data-toggle="modal" data-target="#deleteConfirm"
                                             class="btn btn-sm btn-danger"
                                             onclick="deleteThisTrafficCounting({{ $data }})"><i
                                                 class="fa fa-trash"></i>
                                         </button>
-                                        @if ($data->status == 'on')
-                                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#statusConfirmOff" onclick="statusOffData({{$data}})"><i class="fas fa-toggle-off"></i> OFF</button>
-                                        @else
-                                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#statusConfirmOn" onclick="statusOnData({{$data}})"><i class="fas fa-toggle-on"></i> ON</button>
-                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

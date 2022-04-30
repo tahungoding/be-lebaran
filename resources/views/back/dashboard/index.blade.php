@@ -80,7 +80,7 @@
             <h4>Visitor</h4>
           </div>
           <div class="card-body">
-            {{ $visitor->value }}
+            {{-- {{ $visitor->value }} --}}
           </div>
         </div>
       </div>
@@ -95,11 +95,20 @@
             <h4>User</h4>
           </div>
           <div class="card-body">
-            {{ $user }}
+            @foreach ($analyticsData as $data)
+                  <tr>
+                    <td>{{ ++$no }}</td>
+                    <td>{{ $data['date'] }}</td>
+                    <td>{{ $data['visitors'] }}</td>
+                    <td>{{ $data['pageTitle'] }}</td>
+                    <td>{{ $data['pageViews'] }}</td>
+                  </tr>
+                  @endforeach
           </div>
         </div>
       </div>
     </div>
+      
   </div>
 </section>
 @endsection

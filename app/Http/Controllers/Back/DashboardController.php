@@ -11,8 +11,8 @@ use App\Models\PosGatur;
 use App\Models\Kemacetan;
 use App\Models\Kecelakaan;
 use Illuminate\Support\Facades\Auth;
-use GuzzleHttp\Client;
 use Analytics;
+use GuzzleHttp\Client;
 use Spatie\Analytics\Period;
 
 
@@ -37,19 +37,19 @@ class DashboardController extends Controller
             $query->where('pos_id', Auth::user()->pos_id);
         })->count();
 
-        $client = new Client(); //GuzzleHttp\Client
-        $url = "https://api.countapi.xyz/update/lebaran.sumedangkab.go.id/visitor?amount=1";
+        // $client = new Client(); //GuzzleHttp\Client
+        // $url = "https://api.countapi.xyz/update/lebaran.sumedangkab.go.id/visitor?amount=1";
 
 
-        $response = $client->request('GET', $url, [
-            'verify'  => false,
-        ]);
+        // $response = $client->request('GET', $url, [
+        //     'verify'  => false,
+        // ]);
 
-        $responseBody = json_decode($response->getBody());
-        $data['visitor'] = $responseBody;
+        // $responseBody = json_decode($response->getBody());
+        // $data['visitor'] = $responseBody;
 
-        // $data['analyticsData'] = Analytics::fetchVisitorsAndPageViews(Period::days(7));
-        
+        $data['analyticsData'] = Analytics::fetchVisitorsAndPageViews(Period::days(7));
+        dd($data['analyticsData']);
         return view('back.dashboard.index', $data);
     }
 
