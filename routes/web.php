@@ -11,6 +11,9 @@ use App\Http\Controllers\Back\TrafficCountingController;
 use App\Http\Controllers\Back\KemacetanController;
 use App\Http\Controllers\Back\KecelakaanController;
 use App\Http\Controllers\Back\ManajemenUserController;
+use Spatie\Analytics\Period;
+use Carbon\Carbon;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,10 +26,11 @@ use App\Http\Controllers\Back\ManajemenUserController;
 |
 */
 
+Route::get('/', function () {
 
-Route::get('/', function() {
-    return redirect('login');
-});
+    $analyticsData = Analytics::fetchVisitorsAndPageViews(Period::days(7));
+    return view('welcome', ['analyticsData' => $analyticsData]);
+}); 
 
 Route::resource('login', LoginController::class)->middleware('guest');
 

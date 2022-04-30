@@ -8,8 +8,19 @@
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap4.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css" rel="stylesheet" />
 
     <style>
+        .dz-image img {
+      width: 120px;
+      height: 120px;
+   }
+
+   .dropzone {
+        border: 1px solid #e6e6e6 ;
+        border-radius: 4px ;
+        color: #c8c8c9 ;
+   }
         .dropify-wrapper {
             border: 1px solid #e2e7f1;
             border-radius: .3rem;
@@ -92,19 +103,9 @@
                         <div class="row">
                             <div class="form-group col-md-12 col-12">
                                 <label>Upload Gambar</label>
-                                <input type="file" class="form-control dropify" name="gambar" id="gambar"
-                                    data-allowed-file-extensions="png jpg jpeg" data-show-remove="false">
-                                <span class="errorGambar"></span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-12 col-12">
-                                <label>Status</label>
-                                <select name="status" class="form-control">
-                                    <option value="">Pilih Status</option>
-                                    <option value="on">ON</option>
-                                    <option value="off">OFF</option>
-                                </select>
+                                    <div class="needsclick dropzone" id="document-dropzone">
+                                    </div>
+                                    <span class="errorImage" style="display: none;">Gambar Produk harus di isi</span>
                             </div>
                         </div>
                         <div class="card-footer text-right">
@@ -120,10 +121,13 @@
 @endsection
 
 @section('js')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"
         integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.0/dist/sweetalert2.all.min.js"></script>
+
     <script>
         $('.dropify').dropify();
     </script>
@@ -136,46 +140,98 @@
                 }
             });
 
-            $("#tambahTrafficForm").validate({
-                rules: {
-                    gambar: {
-                        required: true,
-                    },
-                    status: {
-                        required: true,
-                    },
-                   
-                },
-                messages: {
-                    gambar: {
-                        required: "Gambar harus di isi",
-                    },
-
-                    status: {
-                        required: "Keterangan harus di isi",
-                    },
-                    
-                },
-                errorPlacement : function(error, element) {
-                    if(element.attr("name") == "gambar") {
-                        $(".errorGambar").html(error);
-                        $(".dropify-wrapper").css("border", "1px solid #f1556c");
-                    }
-                    else {
-                        error.insertAfter(element); // default error placement.
-                    }
-                },
-
-                success: function (error) {
-                    $(".dropify-wrapper").css("border", "1px solid #e2e7f1");
-                },
-                submitHandler: function(form) {
-                    $("#tambahTrafficCountingButton").prop('disabled', true);
-                    form.submit();
-                }
-            });
-
         });
     </script>
+   <script>
+    var uploadedDocumentMap = {}
+       Dropzone.options.documentDropzone = {
+          url: '{{ route('traffic-counting.store') }}',
+          maxFilesize: 20, // MB
+          addRemoveLinks: true,
+          autoProcessQueue: false,
+          parallelUploads:10,
+          uploadMultiple:true,
+          acceptedFiles: ".jpeg,.jpg,.png,.gif",
+          headers: {
+             'X-CSRF-TOKEN': "{{ csrf_token() }}"
+          },
+          success: function(file, response) {
+             Swal.fire({
+             title: 'Berhasil',
+             text: "Grafik telah berhasil di tambahkan!",
+             icon: 'success',
+             confirmButtonColor: '#7066e0',
+             confirmButtonText: 'Ok'
+             }).then((result) => {
+                 if (result.isConfirmed) {
+                     window.location = "{{ route('traffic-counting.index') }}";
+                 } else {
+                     window.location = "{{ route('traffic-counting.index') }}";
+                 }
+             })
+          },
+          init: function() {
+             var myDropzone = this;
+            
+
+             $("#tambahTrafficCountingButton").click(function () {
+                if (myDropzone.getQueuedFiles().length > 0) {   
+                    $('#tambahTrafficForm').on('submit', function(e){
+                        return true;
+                    });   
+
+                    $(".dropzone").css("cssText", "border: 1px solid #e6e6e6 !important; color: #c8c8c9 !important;");
+                    $(".errorImage").css("cssText", "display: none !important;");
+                } else { 
+                    $('#tambahTrafficForm').on('submit', function(e){
+                        event.preventDefault();
+                        return false;
+                    });     
+
+                    $(".dropzone").css("cssText", "border: 1px solid #f1556c !important; color: #f1556c !important;");
+                    $(".errorImage").css("cssText", "display: block !important; color: #f1556c; font-size: .875rem; font-weight: 400; line-height: 1.5; margin-top: 5px; padding: 0;");
+                }
+             });
+            
+             this.on("addedfiles", function(files) {
+                $("#tambahTrafficCountingButton").click(function (e) {
+                    if(!$("#tambahTrafficForm").valid()) {
+
+                    } else {
+                        e.preventDefault();
+                        myDropzone.processQueue();
+                    }
+                });
+
+                if (myDropzone.getQueuedFiles().length > 0) {                        
+                    $(".dropzone").css("cssText", "border: 1px solid #e6e6e6 !important; color: #c8c8c9 !important;");
+                    $(".errorImage").css("cssText", "display: none !important;");
+                } else {                       
+                    $(".dropzone").css("cssText", "border: 1px solid #f1556c !important; color: #f1556c !important;");
+                    $(".errorImage").css("cssText", "display: block !important; color: #f1556c; font-size: .875rem; font-weight: 400; line-height: 1.5; margin-top: 5px; padding: 0;");
+                }
+
+            });
+ 
+             this.on('sendingmultiple', function(file, xhr, formData) {
+                 // Append all form inputs to the formData Dropzone will POST
+                 var data = $('#tambahTrafficForm').serializeArray();
+                 $.each(data, function(key, el) {
+                     formData.append(el.name, el.value);
+                 });
+             });
+          },
+          removedfile: function(file) {
+             file.previewElement.remove()
+             var name = ''
+             if (typeof file.file_name !== 'undefined') {
+                name = file.file_name
+             } else {
+                name = uploadedDocumentMap[file.name]
+             }
+             $('form').find('input[name="photo[]"][value="' + name + '"]').remove()
+          }
+       }
+  </script>
 
 @endsection
