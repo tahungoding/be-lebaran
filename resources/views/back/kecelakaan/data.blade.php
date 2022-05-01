@@ -174,7 +174,7 @@
                                                     class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
                                                 <button type="button" data-toggle="modal" data-target="#deleteConfirm"
                                                     class="btn btn-sm btn-danger"
-                                                    onclick="deleteThisKemacetan({{ $data }})"><i
+                                                    onclick="deleteThisKecelakaan({{ $data }})"><i
                                                         class="fa fa-trash"></i>
                                                 </button>
         
@@ -229,7 +229,7 @@
                                                     class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
                                                 <button type="button" data-toggle="modal" data-target="#deleteConfirm"
                                                     class="btn btn-sm btn-danger"
-                                                    onclick="deleteThisKemacetan({{ $data }})"><i
+                                                    onclick="deleteThisKecelakaan({{ $data }})"><i
                                                         class="fa fa-trash"></i>
                                                 </button>
         

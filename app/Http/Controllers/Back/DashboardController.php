@@ -36,6 +36,21 @@ class DashboardController extends Controller
         $data['kecelakaan'] = Kecelakaan::when(Auth::user()->role == 'pos', function ($query) {
             $query->where('pos_id', Auth::user()->pos_id);
         })->count();
+        $days = 0;
+        // $analyticsData = Analytics::fetchVisitorsAndPageViews(Period::days($days));
+        $data['analyticsData'] = Analytics::performQuery(
+            Period::days(0),
+            'ga:pageviews',
+            [
+                'metrics' => 'ga:visitors',
+                'dimensions' => 'ga:date',
+                'filters' => 'ga:pagePath==/Init page view'
+            ]
+            
+        );
+        
+        $data['visitor'] = $data['analyticsData']->totalsForAllResults['ga:visitors'];
+       
 
         // $client = new Client(); //GuzzleHttp\Client
         // $url = "https://api.countapi.xyz/update/lebaran.sumedangkab.go.id/visitor?amount=1";
@@ -48,8 +63,8 @@ class DashboardController extends Controller
         // $responseBody = json_decode($response->getBody());
         // $data['visitor'] = $responseBody;
 
-        $data['analyticsData'] = Analytics::fetchVisitorsAndPageViews(Period::days(7));
-        dd($data['analyticsData']);
+        // $data['analyticsData'] = Analytics::fetchVisitorsAndPageViews(Period::days(7));
+        // dd($data['analyticsData']);
         return view('back.dashboard.index', $data);
     }
 

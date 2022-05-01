@@ -111,12 +111,12 @@
                                     Pos
                                 </a>
                             </div>
-                            <div class="search-item">
+                            {{-- <div class="search-item">
                                 <a href="{{ route('pos-gatur.index') }}" style="color: #78828a;">
                                     <i class="fas fa-road mr-1" style="width: 30px"></i>
                                     Pos Gatur
                                 </a>
-                            </div>
+                            </div> --}}
                             <div class="search-item">
                                 <a href="{{ route('traffic-counting.index') }}" style="color: #78828a;">
                                     <i class="fas fa-cars mr-1" style="width: 30px"></i>
@@ -201,11 +201,11 @@
                                     @if ((request()->routeIs('pos.index') && isset($primary_color)) || request()->routeIs('pos.create') || request()->routeIs('pos.edit')) style="color: {{ $primary_color }};" @endif
                                     href="{{ route('pos.index') }}"><i class="fas fa-archway"></i>
                                     <span>Pos</span></a></li>
-                            <li class="{{ request()->routeIs('pos-gatur.index') ? 'active' : '' }}"><a
+                            {{-- <li class="{{ request()->routeIs('pos-gatur.index') ? 'active' : '' }}"><a
                                     class="nav-link"
                                     @if ((request()->routeIs('pos-gatur.index') && isset($primary_color)) || request()->routeIs('pos-gatur.create') || request()->routeIs('pos-gatur.edit')) style="color: {{ $primary_color }};" @endif
                                     href="{{ route('pos-gatur.index') }}"><i class="fas fa-road"></i> <span>Pos
-                                        Gatur</span></a></li>
+                                        Gatur</span></a></li> --}}
                             <li class="{{ request()->routeIs('traffic-counting.index')  ? 'active' : '' }}">
                                 <a class="nav-link"
                                     @if (request()->routeIs('traffic-counting.index') || request()->routeIs('traffic-counting.create') || request()->routeIs('traffic-counting.edit')) style="color: {{ $primary_color }};" @endif

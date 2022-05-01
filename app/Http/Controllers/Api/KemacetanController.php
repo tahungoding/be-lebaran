@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Kemacetan;
+use Carbon\Carbon;
 
 class KemacetanController extends Controller
 {
@@ -15,7 +16,7 @@ class KemacetanController extends Controller
      */
     public function index()
     {
-        $data = Kemacetan::where('status', '=', 'on')->get();
+        $data = Kemacetan::whereDate('created_at', Carbon::today())->where('status', '=', 'on')->orderBy('id', 'DESC')->paginate(20);
 
         return response()->json($data, 200);
     }

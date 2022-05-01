@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Kecelakaan;
+use Carbon\Carbon;
 
 class KecelakaanController extends Controller
 {
@@ -15,7 +16,7 @@ class KecelakaanController extends Controller
      */
     public function index()
     {
-        $data = Kecelakaan::where('status', '=', 'on')->get();
+        $data = Kecelakaan::whereDate('created_at', Carbon::today())->where('status', '=', 'on')->orderBy('id', 'DESC')->paginate(20);
 
         return response()->json($data, 200);
     }
