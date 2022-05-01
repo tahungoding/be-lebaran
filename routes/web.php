@@ -11,8 +11,6 @@ use App\Http\Controllers\Back\TrafficCountingController;
 use App\Http\Controllers\Back\KemacetanController;
 use App\Http\Controllers\Back\KecelakaanController;
 use App\Http\Controllers\Back\ManajemenUserController;
-use Spatie\Analytics\Period;
-use Carbon\Carbon;
 
 
 /*
@@ -26,11 +24,10 @@ use Carbon\Carbon;
 |
 */
 
-Route::get('/', function () {
+// Route::get('/', function () {
 
-    $analyticsData = Analytics::fetchVisitorsAndPageViews(Period::days(7));
-    return view('welcome', ['analyticsData' => $analyticsData]);
-}); 
+  
+// }); 
 
 Route::resource('login', LoginController::class)->middleware('guest');
 
@@ -53,9 +50,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
     // Route::post('jasas/search-jasa', [JasaController::class, 'jasaSearch'])->name('jasaSearch');
     // Route::post('jasas/pagination', [JasaController::class, 'jasaPagination'])->name('jasaPagination');
 
-    Route::resource('pos-gatur', PosGaturController::class);
+    // Route::resource('pos-gatur', PosGaturController::class);
     // Route::post('testimonies/destroy-all', [TestimonyController::class, 'destroyAll'])->name('testimony.destroyAll');
-    Route::post('pos-gatur/check-pos-gatur-name', [PosGaturController::class, 'checkPosGaturName'])->name('checkPosGaturName');
+    // Route::post('pos-gatur/check-pos-gatur-name', [PosGaturController::class, 'checkPosGaturName'])->name('checkPosGaturName');
     // Route::post('testimony/search-testimony', [TestimonyController::class, 'testimonySearch'])->name('testimonySearch');
     // Route::post('testimony/pagination', [TestimonyController::class, 'testimonyPagination'])->name('testimonyPagination');
     Route::resource('traffic-counting', TrafficCountingController::class);

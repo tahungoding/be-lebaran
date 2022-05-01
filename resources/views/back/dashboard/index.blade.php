@@ -7,7 +7,21 @@
   </div>
   <br>
   <div class="row">
-    @if (Auth::user()->role == 'admin')
+    <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+      <div class="card card-statistic-1">
+        <div class="card-icon bg-success">
+          <i class="fas fa-globe"></i>
+        </div>
+        <div class="card-wrap">
+          <div class="card-header">
+            <h4>Pengunjung Hari Ini</h4>
+          </div>
+          <div class="card-body">
+            {{ $visitor }}
+          </div>
+        </div>
+      </div>
+    </div>
       <div class="col-lg-4 col-md-6 col-sm-6 col-12">
         <div class="card card-statistic-1">
           <div class="card-icon" style="background-color: #444444">
@@ -23,22 +37,6 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-        <div class="card card-statistic-1">
-          <div class="card-icon bg-primary">
-            <i class="fas fa-road"></i>
-          </div>
-          <div class="card-wrap">
-            <div class="card-header">
-              <h4>Pos Gatur</h4>
-            </div>
-            <div class="card-body">
-              {{ $pos_gatur }}
-            </div>
-          </div>
-        </div>
-      </div>
-    @endif
     <div class="col-lg-4 col-md-6 col-sm-6 col-12">
       <div class="card card-statistic-1">
         <div class="card-icon bg-warning">
@@ -70,21 +68,7 @@
       </div>
      
     </div>
-    <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-      <div class="card card-statistic-1">
-        <div class="card-icon bg-success">
-          <i class="fas fa-globe"></i>
-        </div>
-        <div class="card-wrap">
-          <div class="card-header">
-            <h4>Visitor</h4>
-          </div>
-          <div class="card-body">
-            {{-- {{ $visitor->value }} --}}
-          </div>
-        </div>
-      </div>
-    </div>
+    
     <div class="col-lg-4 col-md-6 col-sm-6 col-12">
       <div class="card card-statistic-1">
         <div class="card-icon bg-secondary">
@@ -95,15 +79,7 @@
             <h4>User</h4>
           </div>
           <div class="card-body">
-            @foreach ($analyticsData as $data)
-                  <tr>
-                    <td>{{ ++$no }}</td>
-                    <td>{{ $data['date'] }}</td>
-                    <td>{{ $data['visitors'] }}</td>
-                    <td>{{ $data['pageTitle'] }}</td>
-                    <td>{{ $data['pageViews'] }}</td>
-                  </tr>
-                  @endforeach
+            {{ $user }}
           </div>
         </div>
       </div>
